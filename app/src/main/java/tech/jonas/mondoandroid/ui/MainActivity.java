@@ -9,21 +9,25 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.LocalBroadcastManager;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.f2prateek.rx.preferences.Preference;
+import com.trello.rxlifecycle.components.support.RxAppCompatActivity;
+
 import javax.inject.Inject;
 
 import dagger.ObjectGraph;
+import retrofit2.adapter.rxjava.HttpException;
 import tech.jonas.mondoandroid.Constants;
 import tech.jonas.mondoandroid.R;
 import tech.jonas.mondoandroid.api.ApiModule;
 import tech.jonas.mondoandroid.api.Config;
 import tech.jonas.mondoandroid.api.MondoService;
+import tech.jonas.mondoandroid.api.authentication.AccessToken;
 import tech.jonas.mondoandroid.api.authentication.OauthManager;
 import tech.jonas.mondoandroid.api.authentication.OauthService;
 import tech.jonas.mondoandroid.data.Injector;
@@ -31,12 +35,11 @@ import tech.jonas.mondoandroid.ui.model.BalanceMapper;
 import tech.jonas.mondoandroid.ui.model.TransactionMapper;
 import tech.jonas.mondoandroid.utils.RxUtils;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends RxAppCompatActivity {
 
-    @Inject
-    OauthManager oauthManager;
-    @Inject
-    MondoService mondoService;
+    @Inject OauthManager oauthManager;
+    @Inject MondoService mondoService;
+    @Inject @AccessToken Preference<String> accessToken;
     private Toolbar toolbar;
     private RecyclerView rvTransactions;
     private TransactionAdapter transactionAdapter;
@@ -76,14 +79,16 @@ public class MainActivity extends AppCompatActivity {
         LocalBroadcastManager.getInstance(this).registerReceiver(
                 authResultReceiver, intentFilter);
 
-        if (getIntent().getData() == null) {
-            startActivity(oauthManager.createLoginIntent());
-        } else if ("mondo".equals(getIntent().getData().getScheme())) {
+        if (!accessToken.isSet() && getIntent().getData() == null) {
+            startLoginActivity();
+        } else if (getIntent().getData() != null && "mondo".equals(getIntent().getData().getScheme())) {
             Intent serviceIntent = new Intent(this, OauthService.class);
             serviceIntent.setData(getIntent().getData());
             startService(serviceIntent);
         }
-//        getTransactionsAndUpdateUI();
+        if (accessToken.isSet()) {
+            getTransactionsAndUpdateUI();
+        }
 
     }
 
@@ -125,18 +130,34 @@ public class MainActivity extends AppCompatActivity {
 
     public void getTransactionsAndUpdateUI() {
         mondoService.getBalance(Config.ACCOUNT_ID)
+                .compose(bindToLifecycle())
                 .compose(RxUtils.applySchedulers())
                 .compose(BalanceMapper.map(this))
                 .subscribe(balance -> {
                     toolbar.setTitle(getString(R.string.formatted_balance, balance.formattedAmount));
                     setSupportActionBar(toolbar);
+                }, throwable -> {
+                    if (throwable instanceof HttpException) {
+                        startLoginActivity();
+                    }
                 });
         mondoService.getTransactions(Config.ACCOUNT_ID, "merchant")
+                .compose(bindToLifecycle())
                 .compose(RxUtils.applySchedulers())
                 .compose(TransactionMapper.map(this))
-                .subscribe(transactionList -> {
-                    transactionAdapter.setTransactions(transactionList);
-                });
+                .subscribe(transactionAdapter::setTransactions,
+                        throwable -> {
+                            if (throwable instanceof HttpException) {
+                                startLoginActivity();
+                            }
+                        });
+    }
+
+    private void startLoginActivity() {
+        final Intent loginIntent = oauthManager.createLoginIntent();
+        loginIntent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+        startActivity(loginIntent);
+
     }
 
     @Override
