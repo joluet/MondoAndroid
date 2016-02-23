@@ -36,7 +36,11 @@ public class TransactionAdapter extends RecyclerView.Adapter {
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         final Transaction transaction = transactionList.get(position);
         TransactionViewHolder transactionViewHolder = (TransactionViewHolder) holder;
-        transactionViewHolder.tvTitle.setText(transaction.merchantName);
+        if(transaction.isDeclined()) {
+            transactionViewHolder.tvTitle.setText("Declined: " + transaction.merchantName);
+        } else {
+            transactionViewHolder.tvTitle.setText(transaction.merchantName);
+        }
         transactionViewHolder.tvAmount.setText(transaction.formattedAmount);
         Glide.with(appContext)
                 .load(transaction.merchantLogo)
