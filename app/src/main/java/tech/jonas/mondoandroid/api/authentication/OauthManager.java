@@ -45,7 +45,7 @@ public final class OauthManager {
         HttpUrl authorizeUrl = HttpUrl.parse("https://auth.getmondo.co.uk") //
                 .newBuilder() //
                 .addQueryParameter("client_id", Config.CLIENT_ID) //
-                .addQueryParameter("redirect_uri", "mondo://login") //
+                .addQueryParameter("redirect_uri", "https://mondo.co.uk") //
                 .addQueryParameter("response_type", "code") //
                 .addQueryParameter("state", "sdnfklj34345klj5") //
                 .build();
@@ -68,7 +68,7 @@ public final class OauthManager {
                             .add("grant_type", "authorization_code")
                             .add("client_id", Config.CLIENT_ID) //
                             .add("client_secret", Config.CLIENT_SECRET) //
-                            .add("redirect_uri", "mondo://login")
+                            .add("redirect_uri", "https://mondo.co.uk")
                             .add("code", code) //
                             .build()) //
                     .build();

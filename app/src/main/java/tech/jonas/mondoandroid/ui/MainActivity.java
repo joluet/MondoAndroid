@@ -81,7 +81,7 @@ public class MainActivity extends RxAppCompatActivity {
 
         if (!accessToken.isSet() && getIntent().getData() == null) {
             startLoginActivity();
-        } else if (getIntent().getData() != null && "mondo".equals(getIntent().getData().getScheme())) {
+        } else if (getIntent().getData() != null && "mondo.co.uk".equals(getIntent().getData().getHost())) {
             Intent serviceIntent = new Intent(this, OauthService.class);
             serviceIntent.setData(getIntent().getData());
             startService(serviceIntent);
