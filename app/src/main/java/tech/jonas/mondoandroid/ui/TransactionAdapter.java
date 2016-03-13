@@ -37,7 +37,7 @@ public class TransactionAdapter extends RecyclerView.Adapter {
         final Transaction transaction = transactionList.get(position);
         TransactionViewHolder transactionViewHolder = (TransactionViewHolder) holder;
         if(transaction.isDeclined()) {
-            transactionViewHolder.tvTitle.setText("Declined: " + transaction.merchantName);
+            transactionViewHolder.tvTitle.setText(appContext.getString(R.string.transaction_declined, transaction.merchantName));
         } else {
             transactionViewHolder.tvTitle.setText(transaction.merchantName);
         }

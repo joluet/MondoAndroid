@@ -18,6 +18,8 @@ import android.view.MenuItem;
 import com.f2prateek.rx.preferences.Preference;
 import com.trello.rxlifecycle.components.support.RxAppCompatActivity;
 
+import java.util.Collections;
+
 import javax.inject.Inject;
 
 import dagger.ObjectGraph;
@@ -145,6 +147,10 @@ public class MainActivity extends RxAppCompatActivity {
                 .compose(bindToLifecycle())
                 .compose(RxUtils.applySchedulers())
                 .compose(TransactionMapper.map(this))
+                .map(transactions -> {
+                    Collections.reverse(transactions);
+                    return transactions;
+                })
                 .subscribe(transactionAdapter::setTransactions,
                         throwable -> {
                             if (throwable instanceof HttpException) {
