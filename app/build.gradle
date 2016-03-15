@@ -69,7 +69,7 @@ dependencies {
     compile 'com.jakewharton.byteunits:byteunits:0.9.1'
 
     // Retrofit rest client
-    compile 'com.squareup.okhttp3:okhttp:3.1.1'
+    compile 'com.squareup.okhttp3:okhttp:3.2.0'
     compile 'com.squareup.retrofit2:retrofit:2.0.0-beta4'
     compile 'com.squareup.retrofit2:adapter-rxjava:2.0.0-beta4'
     compile 'com.squareup.retrofit2:converter-gson:2.0.0-beta4'
