@@ -1,9 +1,11 @@
 # MondoAndroid
 
-An Android app for [Mondo](https://getmondo.co.uk/)
+A basic Android app for [Mondo](https://getmondo.co.uk/). It lets you view your balance and a list of all transactions.
+
+![A screenshot](./screenshot.png?raw=true)
 
 ## Configuration
-If you have developer access to the Mondo API you can create a non-confidental auth client in the developer console. 
+If you have developer access to the Mondo API you can create a non-confidental auth client in the developer console.
 Then, create a config file with you auth client details that looks like this:
 ```
 public class Config {
