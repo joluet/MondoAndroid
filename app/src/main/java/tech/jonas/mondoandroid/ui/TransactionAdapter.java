@@ -9,14 +9,17 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.timehop.stickyheadersrecyclerview.StickyRecyclerHeadersAdapter;
 
+import java.text.ParseException;
 import java.util.LinkedList;
 import java.util.List;
 
 import tech.jonas.mondoandroid.R;
 import tech.jonas.mondoandroid.ui.model.Transaction;
+import tech.jonas.mondoandroid.utils.DateUtils;
 
-public class TransactionAdapter extends RecyclerView.Adapter {
+public class TransactionAdapter extends RecyclerView.Adapter implements StickyRecyclerHeadersAdapter<RecyclerView.ViewHolder> {
 
     private final Context appContext;
     private List<Transaction> transactionList = new LinkedList<>();
@@ -64,6 +67,30 @@ public class TransactionAdapter extends RecyclerView.Adapter {
     }
 
     @Override
+    public long getHeaderId(int position) {
+        try {
+            return DateUtils.getDayOfYear(transactionList.get(position).created);
+        } catch (ParseException e) {
+            throw new RuntimeException("Couldn't parse date: " + transactionList.get(position).created);
+        }
+    }
+
+    @Override
+    public RecyclerView.ViewHolder onCreateHeaderViewHolder(ViewGroup parent) {
+        final View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.li_date_header, parent, false);
+        return new HeaderViewHolder(view);
+    }
+
+    @Override
+    public void onBindHeaderViewHolder(RecyclerView.ViewHolder holder, int position) {
+        try {
+            ((HeaderViewHolder) holder).headerTitleView.setText(DateUtils.getDateString(transactionList.get(position).created, appContext));
+        } catch (ParseException e) {
+            throw new RuntimeException("Couldn't parse date: " + transactionList.get(position).created);
+        }
+    }
+
+    @Override
     public int getItemCount() {
         return transactionList.size();
     }
@@ -82,6 +109,15 @@ public class TransactionAdapter extends RecyclerView.Adapter {
             ivLogo = (ImageView) itemView.findViewById(R.id.iv_logo);
             tvTitle = (TextView) itemView.findViewById(R.id.tv_title);
             tvAmount = (TextView) itemView.findViewById(R.id.tv_amount);
+        }
+    }
+
+    private class HeaderViewHolder extends RecyclerView.ViewHolder {
+        public final TextView headerTitleView;
+
+        public HeaderViewHolder(View view) {
+            super(view);
+            headerTitleView = (TextView) itemView.findViewById(R.id.tv_title);
         }
     }
 }

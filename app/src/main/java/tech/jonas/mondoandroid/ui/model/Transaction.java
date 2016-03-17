@@ -2,6 +2,24 @@ package tech.jonas.mondoandroid.ui.model;
 
 public class Transaction {
 
+    public final String formattedAmount;
+    public final String description;
+    public final String category;
+    public final String created;
+    public final DeclineReason declineReason;
+    public final String merchantName;
+    public final String merchantLogo;
+
+    public Transaction(String formattedAmount, String description, String category, String created, DeclineReason declineReason, String merchantName, String merchantLogo) {
+        this.formattedAmount = formattedAmount;
+        this.description = description;
+        this.category = category;
+        this.created = created;
+        this.declineReason = declineReason;
+        this.merchantName = merchantName;
+        this.merchantLogo = merchantLogo;
+    }
+
     public boolean isDeclined() {
         return declineReason != null;
     }
@@ -26,23 +44,5 @@ public class Transaction {
                     throw new UnsupportedOperationException("Unknown decline reason: " + declineReason);
             }
         }
-    }
-
-    public final String formattedAmount;
-    public final String description;
-    public final String category;
-    public final String settled;
-    public final DeclineReason declineReason;
-    public final String merchantName;
-    public final String merchantLogo;
-
-    public Transaction(String formattedAmount, String description, String category, String settled, DeclineReason declineReason, String merchantName, String merchantLogo) {
-        this.formattedAmount = formattedAmount;
-        this.description = description;
-        this.category = category;
-        this.settled = settled;
-        this.declineReason = declineReason;
-        this.merchantName = merchantName;
-        this.merchantLogo = merchantLogo;
     }
 }

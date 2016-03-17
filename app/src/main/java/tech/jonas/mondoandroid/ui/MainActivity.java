@@ -16,6 +16,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.f2prateek.rx.preferences.Preference;
+import com.timehop.stickyheadersrecyclerview.StickyRecyclerHeadersDecoration;
 import com.trello.rxlifecycle.components.support.RxAppCompatActivity;
 
 import java.util.Collections;
@@ -65,6 +66,7 @@ public class MainActivity extends RxAppCompatActivity {
         rvTransactions.setLayoutManager(layoutManager);
         transactionAdapter = new TransactionAdapter(getApplicationContext());
         rvTransactions.setAdapter(transactionAdapter);
+        rvTransactions.addItemDecoration(new StickyRecyclerHeadersDecoration(transactionAdapter));
         transactionAdapter.setOnTransactionClickListener(v ->
                 Snackbar.make(rvTransactions, "show details", Snackbar.LENGTH_SHORT).show());
 

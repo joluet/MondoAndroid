@@ -30,10 +30,10 @@ public class TransactionMapper {
         }
         if (apiTransaction.merchant != null) {
             return new Transaction(context.getString(R.string.formatted_amount_gbp, amount, apiTransaction.merchant.emoji), apiTransaction.description, apiTransaction.category,
-                    apiTransaction.settled, declineReason, apiTransaction.merchant.name, apiTransaction.merchant.logo);
+                    apiTransaction.created, declineReason, apiTransaction.merchant.name, apiTransaction.merchant.logo);
         } else {
             return new Transaction(context.getString(R.string.formatted_amount_gbp, amount, ""), apiTransaction.description, apiTransaction.category,
-                    apiTransaction.settled, declineReason, apiTransaction.description, "");
+                    apiTransaction.created, declineReason, apiTransaction.description, "");
         }
     }
 }
