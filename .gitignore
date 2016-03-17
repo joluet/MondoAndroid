@@ -2,8 +2,13 @@
 .gradle
 *Config.java
 /local.properties
-/.idea/workspace.xml
-/.idea/libraries
+!codeStyleSettings.xml
 .DS_Store
 /build
 /captures
+
+# Android Studio
+*.iml
+*.idea/*
+app/.idea/*
+!codeStyleSettings.xml

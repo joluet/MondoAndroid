@@ -154,6 +154,7 @@ public class MainActivity extends RxAppCompatActivity {
                 .subscribe(transactionAdapter::setTransactions,
                         throwable -> {
                             if (throwable instanceof HttpException) {
+                                accessToken.delete();
                                 startLoginActivity();
                             }
                         });
