@@ -12,6 +12,7 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -25,14 +26,15 @@ import javax.inject.Inject;
 
 import dagger.ObjectGraph;
 import retrofit2.adapter.rxjava.HttpException;
+import rx.Observable;
 import tech.jonas.mondoandroid.Constants;
 import tech.jonas.mondoandroid.R;
 import tech.jonas.mondoandroid.api.ApiModule;
 import tech.jonas.mondoandroid.api.Config;
+import tech.jonas.mondoandroid.api.GcmService;
 import tech.jonas.mondoandroid.api.MondoService;
 import tech.jonas.mondoandroid.api.authentication.AccessToken;
 import tech.jonas.mondoandroid.api.authentication.OauthManager;
-import tech.jonas.mondoandroid.api.authentication.OauthService;
 import tech.jonas.mondoandroid.data.Injector;
 import tech.jonas.mondoandroid.ui.model.BalanceMapper;
 import tech.jonas.mondoandroid.ui.model.TransactionMapper;
@@ -42,6 +44,7 @@ public class MainActivity extends RxAppCompatActivity {
 
     @Inject OauthManager oauthManager;
     @Inject MondoService mondoService;
+    @Inject GcmService gcmService;
     @Inject @AccessToken Preference<String> accessToken;
     private Toolbar toolbar;
     private RecyclerView rvTransactions;
@@ -78,17 +81,24 @@ public class MainActivity extends RxAppCompatActivity {
         };
 
         // The filter's action is BROADCAST_ACTION
-        IntentFilter intentFilter = new IntentFilter(
-                Constants.BROADCAST_ACTION);
-        LocalBroadcastManager.getInstance(this).registerReceiver(
-                authResultReceiver, intentFilter);
-
-        if (!accessToken.isSet() && getIntent().getData() == null) {
+        IntentFilter intentFilter = new IntentFilter(Constants.BROADCAST_ACTION);
+        LocalBroadcastManager.getInstance(this).registerReceiver(authResultReceiver, intentFilter);
+        final Uri intentData = getIntent().getData();
+        if (!accessToken.isSet() && intentData == null) {
             startLoginActivity();
-        } else if (getIntent().getData() != null && "mondo.co.uk".equals(getIntent().getData().getHost())) {
-            Intent serviceIntent = new Intent(this, OauthService.class);
-            serviceIntent.setData(getIntent().getData());
-            startService(serviceIntent);
+        } else if (intentData != null && "mondo.co.uk".equals(intentData.getHost())) {
+            final Uri data = getIntent().getData();
+            final Observable<String> tokenObservable = oauthManager.getAuthToken(data).cache();
+
+            // Obtain auth token
+            tokenObservable.compose(RxUtils.applySchedulers())
+                    .subscribe(token -> {
+                        getTransactionsAndUpdateUI();
+                    });
+
+            // Register webhook for notifications
+            tokenObservable.flatMap(token -> oauthManager.registerWebhook())
+                    .subscribe(webhook -> Log.d(getClass().getSimpleName(), "Webhook id: " + webhook.id));
         }
         if (accessToken.isSet()) {
             getTransactionsAndUpdateUI();
@@ -115,21 +125,6 @@ public class MainActivity extends RxAppCompatActivity {
             return true;
         }
         return super.onOptionsItemSelected(item);
-    }
-
-
-    @Override
-    protected void onNewIntent(Intent intent) {
-        super.onNewIntent(intent);
-
-        Uri data = intent.getData();
-        if (data == null) return;
-
-        if ("mondo".equals(data.getScheme())) {
-            Intent serviceIntent = new Intent(this, OauthService.class);
-            serviceIntent.setData(data);
-            startService(serviceIntent);
-        }
     }
 
     public void getTransactionsAndUpdateUI() {

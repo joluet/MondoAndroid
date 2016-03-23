@@ -20,7 +20,7 @@ public class TransactionMapper {
                 .toList();
     }
 
-    private static Transaction map(Context context, tech.jonas.mondoandroid.api.model.Transaction apiTransaction) {
+    public static Transaction map(Context context, tech.jonas.mondoandroid.api.model.Transaction apiTransaction) {
         final double amount = apiTransaction.amount / CENTS_PER_POUND;
         final DeclineReason declineReason;
         if (apiTransaction.declineReason == null) {

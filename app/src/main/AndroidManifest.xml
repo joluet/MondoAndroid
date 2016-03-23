@@ -1,16 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="tech.jonas.mondoandroid">
+<manifest
+    package="tech.jonas.mondoandroid"
+    xmlns:android="http://schemas.android.com/apk/res/android">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <permission
+        android:name="tech.jonas.mondoandroid.permission.C2D_MESSAGE"
+        android:protectionLevel="signature"/>
+    <uses-permission android:name="tech.jonas.mondoandroid.permission.C2D_MESSAGE"/>
 
     <application
+        android:name=".MondoApp"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme"
-        android:name=".MondoApp">
+        android:theme="@style/AppTheme">
         <activity
             android:name=".ui.MainActivity"
             android:label="@string/app_name"
@@ -33,9 +38,24 @@
             </intent-filter>
         </activity>
 
+        <receiver
+            android:name="com.google.android.gms.gcm.GcmReceiver"
+            android:exported="true"
+            android:permission="com.google.android.c2dm.permission.SEND">
+            <intent-filter>
+                <action android:name="com.google.android.c2dm.intent.RECEIVE"/>
+                <category android:name="tech.jonas.mondoandroid"/>
+            </intent-filter>
+        </receiver>
+
         <service
-            android:name=".api.authentication.OauthService"
-            android:exported="false" />
+            android:name="tech.jonas.mondoandroid.gcm.GcmListenerService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.android.c2dm.intent.RECEIVE"/>
+            </intent-filter>
+        </service>
+
     </application>
 
 </manifest>

@@ -3,98 +3,96 @@ package tech.jonas.mondoandroid.api.authentication;
 import android.app.Application;
 import android.content.Intent;
 import android.net.Uri;
-import android.support.v4.content.LocalBroadcastManager;
-import android.util.Log;
 
 import com.f2prateek.rx.preferences.Preference;
-import com.google.gson.Gson;
+import com.google.android.gms.gcm.GoogleCloudMessaging;
+import com.google.android.gms.iid.InstanceID;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import okhttp3.FormBody;
 import okhttp3.HttpUrl;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
-import tech.jonas.mondoandroid.Constants;
+import rx.Observable;
+import tech.jonas.mondoandroid.R;
 import tech.jonas.mondoandroid.api.Config;
+import tech.jonas.mondoandroid.api.GcmService;
+import tech.jonas.mondoandroid.api.MondoService;
+import tech.jonas.mondoandroid.api.model.RegistrationToken;
+import tech.jonas.mondoandroid.api.model.Webhook;
 import tech.jonas.mondoandroid.data.IntentFactory;
+import tech.jonas.mondoandroid.utils.Util;
 
 @Singleton
 public final class OauthManager {
     private final IntentFactory intentFactory;
-    private final OkHttpClient client;
     private final Preference<String> accessToken;
-    private final Gson gson;
     private final Application application;
+    private final MondoService mondoService;
+    private final GcmService gcmService;
+    private String randomId;
 
     @Inject
-    public OauthManager(IntentFactory intentFactory, OkHttpClient client, Gson gson,
+    public OauthManager(IntentFactory intentFactory, MondoService mondoService, GcmService gcmService,
                         @AccessToken Preference<String> accessToken, Application application) {
         this.intentFactory = intentFactory;
-        this.client = client;
-        this.gson = gson;
+        this.mondoService = mondoService;
+        this.gcmService = gcmService;
         this.accessToken = accessToken;
         this.application = application;
     }
 
     public Intent createLoginIntent() {
-        HttpUrl authorizeUrl = HttpUrl.parse("https://auth.getmondo.co.uk") //
-                .newBuilder() //
-                .addQueryParameter("client_id", Config.CLIENT_ID) //
-                .addQueryParameter("redirect_uri", "https://mondo.co.uk") //
-                .addQueryParameter("response_type", "code") //
-                .addQueryParameter("state", "sdnfklj34345klj5") //
+        randomId = UUID.randomUUID().toString();
+        HttpUrl authorizeUrl = HttpUrl.parse("https://auth.getmondo.co.uk")
+                .newBuilder()
+                .addQueryParameter("client_id", Config.CLIENT_ID)
+                .addQueryParameter("redirect_uri", "https://mondo.co.uk")
+                .addQueryParameter("response_type", "code")
+                .addQueryParameter("state", randomId)
                 .build();
 
         return intentFactory.createUrlIntent(authorizeUrl.toString());
     }
 
-    public void handleResult(Uri data) {
-        if (data == null) return;
-
-        String code = data.getQueryParameter("code");
-        if (code == null) return;
-
-        try {
-            // Trade our code for an access token.
-            Request request = new Request.Builder() //
-                    .url("https://api.getmondo.co.uk/oauth2/token") //
-                    .header("Accept", "application/json") //
-                    .post(new FormBody.Builder() //
-                            .add("grant_type", "authorization_code")
-                            .add("client_id", Config.CLIENT_ID) //
-                            .add("client_secret", Config.CLIENT_SECRET) //
-                            .add("redirect_uri", "https://mondo.co.uk")
-                            .add("code", code) //
-                            .build()) //
-                    .build();
-
-            Response response = client.newCall(request).execute();
-            if (response.isSuccessful()) {
-                AccessTokenResponse accessTokenResponse =
-                        gson.getAdapter(AccessTokenResponse.class).fromJson(response.body().string());
-                if (accessTokenResponse != null && accessTokenResponse.access_token != null) {
-                    accessToken.set(accessTokenResponse.access_token);
-
-                    Intent localIntent = new Intent(Constants.BROADCAST_ACTION)
-                            .putExtra(Constants.EXTENDED_DATA_AUTH_SUCCESS, true);
-                    LocalBroadcastManager.getInstance(application).sendBroadcast(localIntent);
-                }
-            }
-        } catch (IOException e) {
-            Log.e(getClass().getSimpleName(), "Failed to get access token.");
-        }
+    public Observable<String> getAuthToken(Uri data) {
+        final Map<String, String> params = new HashMap<>();
+        params.put("grant_type", "authorization_code");
+        params.put("client_id", Config.CLIENT_ID);
+        params.put("client_secret", Config.CLIENT_SECRET);
+        params.put("redirect_uri", "https://mondo.co.uk");
+        params.put("code", data.getQueryParameter("code"));
+        return mondoService.getAccessToken(params)
+                .map(accessTokenResponse -> {
+                    accessToken.set(accessTokenResponse.accessToken);
+                    return accessTokenResponse.accessToken;
+                });
     }
 
-    private static final class AccessTokenResponse {
-        public final String access_token;
+    public Observable<Webhook> registerWebhook() {
+        return mondoService.getAccounts().flatMap(accounts ->
+                Observable.<RegistrationToken>create(subscriber -> {
+                    InstanceID instanceID = InstanceID.getInstance(application);
+                    try {
+                        final String token = instanceID.getToken(application.getString(R.string.gcm_defaultSenderId),
+                                GoogleCloudMessaging.INSTANCE_ID_SCOPE, null);
+                        if (!subscriber.isUnsubscribed()) {
+                            subscriber.onNext(new RegistrationToken(Util.first(accounts.accounts).id, token));
+                            subscriber.onCompleted();
+                        }
+                    } catch (IOException e) {
+                        subscriber.onError(e);
+                    }
+                })).flatMap(registrationToken -> gcmService.uploadToken(registrationToken)
+                .flatMap(registrationAnswer -> mondoService.registerWebhook(registrationToken.accountId, Config.WEBHOOK_URL)))
+                .map(webhookResponse -> webhookResponse.webhook);
+    }
 
-        private AccessTokenResponse(String access_token, String scope) {
-            this.access_token = access_token;
-        }
+    public boolean isStateValid(String state) {
+        return randomId.equals(state);
     }
 }

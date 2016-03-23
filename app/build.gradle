@@ -7,10 +7,11 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:1.5.0'
+        classpath 'com.android.tools.build:gradle:2.0.0-alpha3'
         classpath 'com.neenbedankt.gradle.plugins:android-apt:1.8'
         classpath 'me.tatarka:gradle-retrolambda:3.2.3'
         classpath 'me.tatarka.retrolambda.projectlombok:lombok.ast:0.2.3.a2'
+        classpath 'com.google.gms:google-services:2.0.0-alpha6'
     }
 
     // Exclude the lombok version that the android plugin depends on.
@@ -33,6 +34,13 @@ android {
         versionCode 1
         versionName "1.0"
     }
+
+    signingConfigs {
+        debug {
+            storeFile file('keystore/debug.keystore')
+        }
+    }
+
     buildTypes {
         release {
             minifyEnabled false
@@ -52,6 +60,8 @@ dependencies {
     testCompile 'junit:junit:4.12'
     compile 'com.android.support:appcompat-v7:23.1.1'
     compile 'com.android.support:design:23.1.1'
+
+    compile "com.google.android.gms:play-services-gcm:8.4.0"
 
     compile 'com.timehop.stickyheadersrecyclerview:library:0.4.3@aar'
 
@@ -77,3 +87,6 @@ dependencies {
     compile 'com.squareup.retrofit2:converter-gson:2.0.0-beta4'
     compile 'com.squareup.okhttp3:logging-interceptor:3.1.1'
 }
+
+// Needs to be in the bottom to be able to detect play services version needed
+apply plugin: 'com.google.gms.google-services'
