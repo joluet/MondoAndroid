@@ -14,7 +14,6 @@ import java.util.Map;
 import java.util.UUID;
 
 import javax.inject.Inject;
-import javax.inject.Singleton;
 
 import okhttp3.HttpUrl;
 import rx.Observable;
@@ -25,9 +24,10 @@ import tech.jonas.mondoandroid.api.MondoService;
 import tech.jonas.mondoandroid.api.model.RegistrationToken;
 import tech.jonas.mondoandroid.api.model.Webhook;
 import tech.jonas.mondoandroid.data.IntentFactory;
+import tech.jonas.mondoandroid.di.scopes.ApiScope;
 import tech.jonas.mondoandroid.utils.Util;
 
-@Singleton
+@ApiScope
 public final class OauthManager {
     private final IntentFactory intentFactory;
     private final Preference<String> accessToken;

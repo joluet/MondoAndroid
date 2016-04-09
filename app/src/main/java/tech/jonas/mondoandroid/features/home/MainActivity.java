@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -24,23 +23,22 @@ import java.util.Collections;
 
 import javax.inject.Inject;
 
-import dagger.ObjectGraph;
 import retrofit2.adapter.rxjava.HttpException;
 import rx.Observable;
 import tech.jonas.mondoandroid.Constants;
 import tech.jonas.mondoandroid.R;
-import tech.jonas.mondoandroid.api.ApiModule;
+import tech.jonas.mondoandroid.api.ApiComponent;
 import tech.jonas.mondoandroid.api.Config;
 import tech.jonas.mondoandroid.api.GcmService;
 import tech.jonas.mondoandroid.api.MondoService;
 import tech.jonas.mondoandroid.api.authentication.AccessToken;
 import tech.jonas.mondoandroid.api.authentication.OauthManager;
-import tech.jonas.mondoandroid.data.Injector;
+import tech.jonas.mondoandroid.di.ComponentProvider;
 import tech.jonas.mondoandroid.ui.model.BalanceMapper;
 import tech.jonas.mondoandroid.ui.model.TransactionMapper;
 import tech.jonas.mondoandroid.utils.RxUtils;
 
-public class MainActivity extends RxAppCompatActivity {
+public class MainActivity extends RxAppCompatActivity implements HomeView {
 
     @Inject OauthManager oauthManager;
     @Inject MondoService mondoService;
@@ -49,16 +47,16 @@ public class MainActivity extends RxAppCompatActivity {
     private Toolbar toolbar;
     private RecyclerView rvTransactions;
     private TransactionAdapter transactionAdapter;
-    private ObjectGraph activityGraph;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // Explicitly reference the application object since we don't want to match our own injector.
-        ObjectGraph appGraph = Injector.obtain(getApplication());
-        appGraph.inject(this);
-        activityGraph = appGraph.plus(new ApiModule());
+        ApiComponent apiComponent = ((ComponentProvider<ApiComponent>) getApplicationContext()).getComponent();
+        DaggerHomeComponent.builder()
+                .apiComponent(apiComponent)
+                .homeModule(new HomeModule(this))
+                .build().inject(this);
 
         setContentView(R.layout.activity_main);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -164,11 +162,4 @@ public class MainActivity extends RxAppCompatActivity {
 
     }
 
-    @Override
-    public Object getSystemService(@NonNull String name) {
-        if (Injector.matchesService(name)) {
-            return activityGraph;
-        }
-        return super.getSystemService(name);
-    }
 }

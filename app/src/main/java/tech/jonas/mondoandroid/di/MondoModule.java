@@ -2,22 +2,20 @@
 package tech.jonas.mondoandroid.di;
 
 import android.app.Application;
+import android.content.SharedPreferences;
+
+import com.f2prateek.rx.preferences.RxSharedPreferences;
 
 import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
 import tech.jonas.mondoandroid.MondoApp;
-import tech.jonas.mondoandroid.data.DataModule;
+import tech.jonas.mondoandroid.data.IntentFactory;
 
-@Module(
-        includes = {
-                DataModule.class
-        },
-        injects = {
-                MondoApp.class
-        }
-)
+import static android.content.Context.MODE_PRIVATE;
+
+@Module
 public final class MondoModule {
     private final MondoApp app;
 
@@ -29,5 +27,23 @@ public final class MondoModule {
     @Singleton
     Application provideApplication() {
         return app;
+    }
+
+    @Provides
+    @Singleton
+    SharedPreferences provideSharedPreferences(Application app) {
+        return app.getSharedPreferences("mondo", MODE_PRIVATE);
+    }
+
+    @Provides
+    @Singleton
+    RxSharedPreferences provideRxSharedPreferences(SharedPreferences prefs) {
+        return RxSharedPreferences.create(prefs);
+    }
+
+    @Provides
+    @Singleton
+    IntentFactory provideIntentFactory() {
+        return IntentFactory.REAL;
     }
 }

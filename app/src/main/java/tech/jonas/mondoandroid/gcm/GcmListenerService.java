@@ -14,10 +14,10 @@ import com.google.gson.Gson;
 
 import javax.inject.Inject;
 
-import dagger.ObjectGraph;
 import tech.jonas.mondoandroid.R;
+import tech.jonas.mondoandroid.api.ApiComponent;
 import tech.jonas.mondoandroid.api.model.PushMessage;
-import tech.jonas.mondoandroid.data.Injector;
+import tech.jonas.mondoandroid.di.ComponentProvider;
 import tech.jonas.mondoandroid.features.home.MainActivity;
 import tech.jonas.mondoandroid.ui.model.Transaction;
 import tech.jonas.mondoandroid.ui.model.TransactionMapper;
@@ -30,8 +30,9 @@ public class GcmListenerService extends com.google.android.gms.gcm.GcmListenerSe
     public void onCreate() {
         super.onCreate();
 
-        ObjectGraph appGraph = Injector.obtain(getApplication());
-        appGraph.inject(this);
+        ApiComponent apiComponent = ((ComponentProvider<ApiComponent>) getApplicationContext()).getComponent();
+        apiComponent.inject(this);
+
     }
 
     /**

@@ -1,29 +1,36 @@
 package tech.jonas.mondoandroid;
 
 import android.app.Application;
-import android.support.annotation.NonNull;
 
-import dagger.ObjectGraph;
-import tech.jonas.mondoandroid.data.Injector;
-import tech.jonas.mondoandroid.di.Modules;
+import tech.jonas.mondoandroid.api.ApiComponent;
+import tech.jonas.mondoandroid.api.ApiModule;
+import tech.jonas.mondoandroid.api.DaggerApiComponent;
+import tech.jonas.mondoandroid.di.ComponentProvider;
+import tech.jonas.mondoandroid.di.DaggerMondoComponent;
+import tech.jonas.mondoandroid.di.MondoComponent;
+import tech.jonas.mondoandroid.di.MondoModule;
 
-public final class MondoApp extends Application {
-    private ObjectGraph objectGraph;
+public final class MondoApp extends Application implements ComponentProvider<ApiComponent> {
+    private ApiComponent apiComponent;
 
     @Override
     public void onCreate() {
         super.onCreate();
 
-        objectGraph = ObjectGraph.create(Modules.list(this));
-        objectGraph.inject(this);
 
+        final MondoComponent mondoComponent = DaggerMondoComponent.builder()
+                .mondoModule(new MondoModule(this))
+                .build();
+
+        apiComponent = DaggerApiComponent.builder()
+                .mondoComponent(mondoComponent)
+                .apiModule(new ApiModule())
+                .build();
     }
 
+
     @Override
-    public Object getSystemService(@NonNull String name) {
-        if (Injector.matchesService(name)) {
-            return objectGraph;
-        }
-        return super.getSystemService(name);
+    public ApiComponent getComponent() {
+        return apiComponent;
     }
 }

@@ -5,13 +5,13 @@ import com.f2prateek.rx.preferences.Preference;
 import java.io.IOException;
 
 import javax.inject.Inject;
-import javax.inject.Singleton;
 
 import okhttp3.Interceptor;
 import okhttp3.Request;
 import okhttp3.Response;
+import tech.jonas.mondoandroid.di.scopes.ApiScope;
 
-@Singleton
+@ApiScope
 public final class OauthInterceptor implements Interceptor {
     private final Preference<String> accessToken;
 
