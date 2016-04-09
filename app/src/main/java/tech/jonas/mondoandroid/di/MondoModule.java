@@ -1,5 +1,5 @@
 
-package tech.jonas.mondoandroid;
+package tech.jonas.mondoandroid.di;
 
 import android.app.Application;
 
@@ -7,6 +7,7 @@ import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
+import tech.jonas.mondoandroid.MondoApp;
 import tech.jonas.mondoandroid.data.DataModule;
 
 @Module(

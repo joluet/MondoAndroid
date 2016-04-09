@@ -18,7 +18,7 @@ import dagger.ObjectGraph;
 import tech.jonas.mondoandroid.R;
 import tech.jonas.mondoandroid.api.model.PushMessage;
 import tech.jonas.mondoandroid.data.Injector;
-import tech.jonas.mondoandroid.ui.MainActivity;
+import tech.jonas.mondoandroid.features.home.MainActivity;
 import tech.jonas.mondoandroid.ui.model.Transaction;
 import tech.jonas.mondoandroid.ui.model.TransactionMapper;
 

@@ -5,6 +5,7 @@ import android.support.annotation.NonNull;
 
 import dagger.ObjectGraph;
 import tech.jonas.mondoandroid.data.Injector;
+import tech.jonas.mondoandroid.di.Modules;
 
 public final class MondoApp extends Application {
     private ObjectGraph objectGraph;

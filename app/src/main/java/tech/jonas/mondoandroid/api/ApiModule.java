@@ -14,8 +14,8 @@ import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 import tech.jonas.mondoandroid.api.authentication.OauthInterceptor;
+import tech.jonas.mondoandroid.features.home.MainActivity;
 import tech.jonas.mondoandroid.gcm.GcmListenerService;
-import tech.jonas.mondoandroid.ui.MainActivity;
 
 @Module(
         complete = false,

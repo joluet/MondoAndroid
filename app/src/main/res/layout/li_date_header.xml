@@ -11,5 +11,5 @@
     android:paddingTop="4dp"
     android:textColor="@android:color/white"
     android:textSize="14sp"
-    tools:context=".ui.MainActivity"
+    tools:context=".features.home.MainActivity"
     tools:text="12 March"/>
