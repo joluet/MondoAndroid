@@ -24,6 +24,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 import tech.jonas.mondoandroid.api.authentication.AccessToken;
 import tech.jonas.mondoandroid.api.authentication.OauthInterceptor;
 import tech.jonas.mondoandroid.di.scopes.ApiScope;
+import tech.jonas.mondoandroid.features.home.HomeStringProvider;
 
 import static com.jakewharton.byteunits.DecimalByteUnit.MEGABYTES;
 
@@ -138,4 +139,11 @@ public final class ApiModule {
     Preference<String> provideAccessToken(RxSharedPreferences prefs) {
         return prefs.getString("access-token");
     }
+
+    @Provides
+    @ApiScope
+    HomeStringProvider provideStringProvider(Application application) {
+        return new HomeStringProvider(application);
+    }
+
 }
