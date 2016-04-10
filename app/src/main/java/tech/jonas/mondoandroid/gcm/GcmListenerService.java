@@ -18,6 +18,7 @@ import tech.jonas.mondoandroid.R;
 import tech.jonas.mondoandroid.api.ApiComponent;
 import tech.jonas.mondoandroid.api.model.PushMessage;
 import tech.jonas.mondoandroid.di.ComponentProvider;
+import tech.jonas.mondoandroid.features.home.HomeStringProvider;
 import tech.jonas.mondoandroid.features.home.MainActivity;
 import tech.jonas.mondoandroid.ui.model.Transaction;
 import tech.jonas.mondoandroid.ui.model.TransactionMapper;
@@ -25,6 +26,7 @@ import tech.jonas.mondoandroid.ui.model.TransactionMapper;
 public class GcmListenerService extends com.google.android.gms.gcm.GcmListenerService {
 
     @Inject Gson gson;
+    @Inject HomeStringProvider stringProvider;
 
     @Override
     public void onCreate() {
@@ -47,7 +49,7 @@ public class GcmListenerService extends com.google.android.gms.gcm.GcmListenerSe
         String message = data.getString("message");
 
         PushMessage pushMessage = gson.fromJson(message, PushMessage.class);
-        final Transaction transaction = TransactionMapper.map(getApplicationContext(), pushMessage.transaction);
+        final Transaction transaction = TransactionMapper.map(stringProvider, pushMessage.transaction);
 
         sendNotification(transaction);
     }
