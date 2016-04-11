@@ -52,6 +52,9 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+
+    // We need this for Robolectric unit tests: https://github.com/robolectric/robolectric/issues/1862
+    useLibrary 'org.apache.http.legacy'
 }
 
 dependencies {
@@ -89,6 +92,12 @@ dependencies {
     compile 'com.squareup.retrofit2:adapter-rxjava:2.0.0-beta4'
     compile 'com.squareup.retrofit2:converter-gson:2.0.0-beta4'
     compile 'com.squareup.okhttp3:logging-interceptor:3.1.1'
+
+    // Robolectric unit testing dependencies
+    testCompile 'org.robolectric:robolectric:3.0'
+    testCompile 'org.mockito:mockito-core:1.10.19'
+    testCompile 'org.robolectric:shadows-support-v4:3.0'
+    testCompile 'junit:junit:4.12'
 }
 
 // Needs to be in the bottom to be able to detect play services version needed
