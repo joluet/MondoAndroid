@@ -9,17 +9,17 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.timehop.stickyheadersrecyclerview.StickyRecyclerHeadersAdapter;
 
 import java.text.ParseException;
 import java.util.LinkedList;
 import java.util.List;
 
+import ca.barrenechea.widget.recyclerview.decoration.StickyHeaderAdapter;
 import tech.jonas.mondoandroid.R;
 import tech.jonas.mondoandroid.ui.model.Transaction;
 import tech.jonas.mondoandroid.utils.DateUtils;
 
-public class TransactionAdapter extends RecyclerView.Adapter implements StickyRecyclerHeadersAdapter<RecyclerView.ViewHolder> {
+public class TransactionAdapter extends RecyclerView.Adapter implements StickyHeaderAdapter<RecyclerView.ViewHolder> {
 
     private final Context appContext;
     private List<Transaction> transactionList = new LinkedList<>();
@@ -58,8 +58,11 @@ public class TransactionAdapter extends RecyclerView.Adapter implements StickyRe
     }
 
     public void setTransactions(List<Transaction> categories) {
+        int previousCount = transactionList.size();
+        transactionList.clear();
+        notifyItemRangeRemoved(0, previousCount);
         transactionList.addAll(categories);
-        notifyItemRangeInserted(0, transactionList.size());
+        notifyItemRangeInserted(0, categories.size());
     }
 
     public void setOnTransactionClickListener(OnTransactionClickListener onTransactionClickListener) {

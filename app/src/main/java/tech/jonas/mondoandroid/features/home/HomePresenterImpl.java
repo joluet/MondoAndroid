@@ -41,6 +41,7 @@ public class HomePresenterImpl implements HomePresenter {
 
     @Override
     public void onBindView(Uri uri) {
+        view.setIsLoading(true);
         if (!accessToken.isSet() && uri == null) {
             view.startLoginActivity();
         } else if (uri != null && "mondo.co.uk".equals(uri.getHost())) {
@@ -69,6 +70,12 @@ public class HomePresenterImpl implements HomePresenter {
         subscriptionManager.unsubscribe();
     }
 
+    @Override
+    public void onRefresh() {
+        view.setIsLoading(true);
+        getTransactionsAndUpdateUI();
+    }
+
     private void getTransactionsAndUpdateUI() {
         Subscription balanceSub = mondoService.getBalance(Config.ACCOUNT_ID)
                 .compose(RxUtils.applySchedulers())
@@ -86,6 +93,7 @@ public class HomePresenterImpl implements HomePresenter {
 
         Subscription transactionSub = mondoService.getTransactions(Config.ACCOUNT_ID, "merchant")
                 .compose(RxUtils.applySchedulers())
+                .doOnCompleted(() -> view.setIsLoading(false))
                 .compose(TransactionMapper.map(stringProvider))
                 .map(transactions -> {
                     Collections.reverse(transactions);

@@ -3,19 +3,21 @@ package tech.jonas.mondoandroid.features.home;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.timehop.stickyheadersrecyclerview.StickyRecyclerHeadersDecoration;
 import com.trello.rxlifecycle.components.support.RxAppCompatActivity;
 
 import java.util.List;
 
 import javax.inject.Inject;
 
+import ca.barrenechea.widget.recyclerview.decoration.StickyHeaderDecoration;
+import jp.wasabeef.recyclerview.animators.FadeInUpAnimator;
 import tech.jonas.mondoandroid.R;
 import tech.jonas.mondoandroid.api.ApiComponent;
 import tech.jonas.mondoandroid.api.authentication.OauthManager;
@@ -29,6 +31,7 @@ public class MainActivity extends RxAppCompatActivity implements HomeView {
     private Toolbar toolbar;
     private RecyclerView rvTransactions;
     private TransactionAdapter transactionAdapter;
+    private SwipeRefreshLayout swipeContainer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,13 +50,22 @@ public class MainActivity extends RxAppCompatActivity implements HomeView {
         rvTransactions = (RecyclerView) findViewById(R.id.rv_transactions);
         final RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         rvTransactions.setLayoutManager(layoutManager);
+        rvTransactions.setItemAnimator(new FadeInUpAnimator());
         transactionAdapter = new TransactionAdapter(getApplicationContext());
         rvTransactions.setAdapter(transactionAdapter);
-        rvTransactions.addItemDecoration(new StickyRecyclerHeadersDecoration(transactionAdapter));
+        rvTransactions.addItemDecoration(new StickyHeaderDecoration(transactionAdapter));
         transactionAdapter.setOnTransactionClickListener(v ->
                 Snackbar.make(rvTransactions, "show details", Snackbar.LENGTH_SHORT).show());
+        swipeContainer = (SwipeRefreshLayout) findViewById(R.id.swipe_container);
 
+        // Setup refresh listener which triggers new data loading
+        swipeContainer.setOnRefreshListener(() -> presenter.onRefresh());
         presenter.onBindView(getIntent().getData());
+    }
+
+    @Override
+    public void setIsLoading(boolean isLoading) {
+        swipeContainer.post(() -> swipeContainer.setRefreshing(isLoading));
     }
 
     @Override
