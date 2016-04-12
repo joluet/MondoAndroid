@@ -12,6 +12,7 @@ import tech.jonas.mondoandroid.di.MondoComponent;
 import tech.jonas.mondoandroid.di.scopes.ApiScope;
 import tech.jonas.mondoandroid.features.home.HomeStringProvider;
 import tech.jonas.mondoandroid.gcm.GcmListenerService;
+import tech.jonas.mondoandroid.utils.SchedulerProvider;
 
 @ApiScope
 @Component(dependencies = MondoComponent.class, modules = ApiModule.class)
@@ -32,4 +33,6 @@ public interface ApiComponent {
 
     @AccessToken
     Preference<String> accessToken();
+
+    SchedulerProvider schedulerProvider();
 }

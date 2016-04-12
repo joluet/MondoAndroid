@@ -8,6 +8,7 @@ import javax.inject.Singleton;
 
 import dagger.Component;
 import tech.jonas.mondoandroid.data.IntentFactory;
+import tech.jonas.mondoandroid.utils.SchedulerProvider;
 
 @Singleton
 @Component(modules = {MondoModule.class})
@@ -19,4 +20,6 @@ public interface MondoComponent {
     RxSharedPreferences rxSharedPreferences();
 
     IntentFactory intentFactory();
+
+    SchedulerProvider schedulerProvider();
 }

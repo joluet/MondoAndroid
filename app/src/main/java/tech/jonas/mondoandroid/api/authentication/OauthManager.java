@@ -28,7 +28,7 @@ import tech.jonas.mondoandroid.di.scopes.ApiScope;
 import tech.jonas.mondoandroid.utils.Util;
 
 @ApiScope
-public final class OauthManager {
+public class OauthManager {
     private final IntentFactory intentFactory;
     private final Preference<String> accessToken;
     private final Application application;

@@ -16,13 +16,13 @@ import java.util.List;
 
 import ca.barrenechea.widget.recyclerview.decoration.StickyHeaderAdapter;
 import tech.jonas.mondoandroid.R;
-import tech.jonas.mondoandroid.ui.model.Transaction;
+import tech.jonas.mondoandroid.ui.model.UiTransaction;
 import tech.jonas.mondoandroid.utils.DateUtils;
 
 public class TransactionAdapter extends RecyclerView.Adapter implements StickyHeaderAdapter<RecyclerView.ViewHolder> {
 
     private final Context appContext;
-    private List<Transaction> transactionList = new LinkedList<>();
+    private List<UiTransaction> transactionList = new LinkedList<>();
     private OnTransactionClickListener onTransactionClickListener;
 
     public TransactionAdapter(Context appContext) {
@@ -37,7 +37,7 @@ public class TransactionAdapter extends RecyclerView.Adapter implements StickyHe
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-        final Transaction transaction = transactionList.get(position);
+        final UiTransaction transaction = transactionList.get(position);
         TransactionViewHolder transactionViewHolder = (TransactionViewHolder) holder;
         if (transaction.isDeclined()) {
             transactionViewHolder.tvTitle.setText(appContext.getString(R.string.transaction_declined, transaction.merchantName));
@@ -57,7 +57,7 @@ public class TransactionAdapter extends RecyclerView.Adapter implements StickyHe
         });
     }
 
-    public void setTransactions(List<Transaction> categories) {
+    public void setTransactions(List<UiTransaction> categories) {
         int previousCount = transactionList.size();
         transactionList.clear();
         notifyItemRangeRemoved(0, previousCount);
@@ -99,7 +99,7 @@ public class TransactionAdapter extends RecyclerView.Adapter implements StickyHe
     }
 
     public interface OnTransactionClickListener {
-        void onClick(Transaction transaction);
+        void onClick(UiTransaction transaction);
     }
 
     private class TransactionViewHolder extends RecyclerView.ViewHolder {

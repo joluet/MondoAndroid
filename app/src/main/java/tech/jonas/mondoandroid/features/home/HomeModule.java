@@ -8,6 +8,7 @@ import tech.jonas.mondoandroid.api.MondoService;
 import tech.jonas.mondoandroid.api.authentication.AccessToken;
 import tech.jonas.mondoandroid.api.authentication.OauthManager;
 import tech.jonas.mondoandroid.di.scopes.HomeScope;
+import tech.jonas.mondoandroid.utils.SchedulerProvider;
 
 @Module
 public class HomeModule {
@@ -28,7 +29,8 @@ public class HomeModule {
     HomePresenter provideHomePresenter(HomeView view, HomeStringProvider stringProvider,
                                        SubscriptionManager subscriptionManager,
                                        OauthManager oauthManager, MondoService mondoService,
-                                       @AccessToken Preference<String> accessToken) {
+                                       @AccessToken Preference<String> accessToken,
+                                       SchedulerProvider schedulerProvider) {
         return HomePresenterImpl.builder()
                 .withSubscriptionManager(subscriptionManager)
                 .withStringProvider(stringProvider)
@@ -36,6 +38,7 @@ public class HomeModule {
                 .withOauthManager(oauthManager)
                 .withMondoService(mondoService)
                 .withAccessToken(accessToken)
+                .withSchedulerProvider(schedulerProvider)
                 .build();
     }
 

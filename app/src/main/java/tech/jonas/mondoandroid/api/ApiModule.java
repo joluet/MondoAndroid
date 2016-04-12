@@ -30,6 +30,7 @@ import static com.jakewharton.byteunits.DecimalByteUnit.MEGABYTES;
 
 @Module
 public final class ApiModule {
+    public static final String PREF_KEY_ACCESS_TOKEN = "access-token";
     private static final int DISK_CACHE_SIZE = (int) MEGABYTES.toBytes(50);
     private static final HttpUrl PRODUCTION_API_URL = HttpUrl.parse(Config.BASE_URL);
     private static final HttpUrl GCM_API_URL = HttpUrl.parse(Config.GCM_URL);
@@ -137,7 +138,7 @@ public final class ApiModule {
     @ApiScope
     @AccessToken
     Preference<String> provideAccessToken(RxSharedPreferences prefs) {
-        return prefs.getString("access-token");
+        return prefs.getString(PREF_KEY_ACCESS_TOKEN);
     }
 
     @Provides

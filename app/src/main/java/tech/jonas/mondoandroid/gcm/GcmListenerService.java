@@ -20,8 +20,8 @@ import tech.jonas.mondoandroid.api.model.PushMessage;
 import tech.jonas.mondoandroid.di.ComponentProvider;
 import tech.jonas.mondoandroid.features.home.HomeStringProvider;
 import tech.jonas.mondoandroid.features.home.MainActivity;
-import tech.jonas.mondoandroid.ui.model.Transaction;
 import tech.jonas.mondoandroid.ui.model.TransactionMapper;
+import tech.jonas.mondoandroid.ui.model.UiTransaction;
 
 public class GcmListenerService extends com.google.android.gms.gcm.GcmListenerService {
 
@@ -49,7 +49,7 @@ public class GcmListenerService extends com.google.android.gms.gcm.GcmListenerSe
         String message = data.getString("message");
 
         PushMessage pushMessage = gson.fromJson(message, PushMessage.class);
-        final Transaction transaction = TransactionMapper.map(stringProvider, pushMessage.transaction);
+        final UiTransaction transaction = TransactionMapper.map(stringProvider, pushMessage.transaction);
 
         sendNotification(transaction);
     }
@@ -57,9 +57,9 @@ public class GcmListenerService extends com.google.android.gms.gcm.GcmListenerSe
     /**
      * Create and show a simple notification containing the received GCM message.
      *
-     * @param transaction Transaction object received.
+     * @param transaction UiTransaction object received.
      */
-    private void sendNotification(Transaction transaction) {
+    private void sendNotification(UiTransaction transaction) {
         final String message = getString(R.string.amount_and_merchant, transaction.formattedAmount, transaction.merchantName);
 
         Intent intent = new Intent(this, MainActivity.class);

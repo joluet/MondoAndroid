@@ -16,6 +16,7 @@ import tech.jonas.mondoandroid.api.authentication.OauthManager;
 import tech.jonas.mondoandroid.ui.model.BalanceMapper;
 import tech.jonas.mondoandroid.ui.model.TransactionMapper;
 import tech.jonas.mondoandroid.utils.RxUtils;
+import tech.jonas.mondoandroid.utils.SchedulerProvider;
 
 public class HomePresenterImpl implements HomePresenter {
 
@@ -25,6 +26,7 @@ public class HomePresenterImpl implements HomePresenter {
     private final OauthManager oauthManager;
     private final MondoService mondoService;
     private final @AccessToken Preference<String> accessToken;
+    private final SchedulerProvider schedulerProvider;
 
     private HomePresenterImpl(Builder builder) {
         subscriptionManager = builder.subscriptionManager;
@@ -33,6 +35,7 @@ public class HomePresenterImpl implements HomePresenter {
         oauthManager = builder.oauthManager;
         mondoService = builder.mondoService;
         accessToken = builder.accessToken;
+        schedulerProvider = builder.schedulerProvider;
     }
 
     public static ISubscriptionManager builder() {
@@ -48,14 +51,15 @@ public class HomePresenterImpl implements HomePresenter {
             final Observable<String> tokenObservable = oauthManager.getAuthToken(uri).cache();
 
             // Obtain auth token
-            Subscription tokenSub = tokenObservable.compose(RxUtils.applySchedulers())
+            Subscription tokenSub = tokenObservable.compose(schedulerProvider.getSchedulers())
                     .subscribe(token -> {
                         getTransactionsAndUpdateUI();
                     }, throwable -> RxUtils.crashOnError());
             subscriptionManager.add(tokenSub);
 
             // Register webhook for notifications
-            Subscription webhookSub = tokenObservable.flatMap(token -> oauthManager.registerWebhook()).compose(RxUtils.applySchedulers())
+            Subscription webhookSub = tokenObservable.flatMap(token ->
+                    oauthManager.registerWebhook()).compose(schedulerProvider.getSchedulers())
                     .subscribe(webhook -> {
                     }, throwable -> RxUtils.crashOnError());
             subscriptionManager.add(webhookSub);
@@ -78,7 +82,7 @@ public class HomePresenterImpl implements HomePresenter {
 
     private void getTransactionsAndUpdateUI() {
         Subscription balanceSub = mondoService.getBalance(Config.ACCOUNT_ID)
-                .compose(RxUtils.applySchedulers())
+                .compose(schedulerProvider.getSchedulers())
                 .compose(BalanceMapper.map(stringProvider))
                 .subscribe(balance -> {
                     view.setTitle(stringProvider.getFormattedBalance(balance.formattedAmount));
@@ -92,7 +96,7 @@ public class HomePresenterImpl implements HomePresenter {
         subscriptionManager.add(balanceSub);
 
         Subscription transactionSub = mondoService.getTransactions(Config.ACCOUNT_ID, "merchant")
-                .compose(RxUtils.applySchedulers())
+                .compose(schedulerProvider.getSchedulers())
                 .doOnCompleted(() -> view.setIsLoading(false))
                 .compose(TransactionMapper.map(stringProvider))
                 .map(transactions -> {
@@ -115,8 +119,12 @@ public class HomePresenterImpl implements HomePresenter {
         HomePresenterImpl build();
     }
 
+    interface ISchedulerProvider {
+        IBuild withSchedulerProvider(SchedulerProvider val);
+    }
+
     interface IAccessToken {
-        IBuild withAccessToken(Preference<String> val);
+        ISchedulerProvider withAccessToken(Preference<String> val);
     }
 
     interface IMondoService {
@@ -139,19 +147,26 @@ public class HomePresenterImpl implements HomePresenter {
         IStringProvider withSubscriptionManager(SubscriptionManager val);
     }
 
-    public static final class Builder implements IAccessToken, IMondoService, IOauthManager, IView, IStringProvider, ISubscriptionManager, IBuild {
+    public static final class Builder implements ISchedulerProvider, IAccessToken, IMondoService, IOauthManager, IView, IStringProvider, ISubscriptionManager, IBuild {
         private Preference<String> accessToken;
         private MondoService mondoService;
         private OauthManager oauthManager;
         private HomeView view;
         private HomeStringProvider stringProvider;
         private SubscriptionManager subscriptionManager;
+        private SchedulerProvider schedulerProvider;
 
         private Builder() {
         }
 
         @Override
-        public IBuild withAccessToken(Preference<String> val) {
+        public IBuild withSchedulerProvider(SchedulerProvider val) {
+            schedulerProvider = val;
+            return this;
+        }
+
+        @Override
+        public ISchedulerProvider withAccessToken(Preference<String> val) {
             accessToken = val;
             return this;
         }
