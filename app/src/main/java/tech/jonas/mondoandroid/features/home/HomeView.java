@@ -2,7 +2,7 @@ package tech.jonas.mondoandroid.features.home;
 
 import java.util.List;
 
-import tech.jonas.mondoandroid.ui.model.Transaction;
+import tech.jonas.mondoandroid.ui.model.UiTransaction;
 
 public interface HomeView {
     void setIsLoading(boolean isLoading);
@@ -11,5 +11,5 @@ public interface HomeView {
 
     void startLoginActivity();
 
-    void setTransactions(List<Transaction> transactions);
+    void setTransactions(List<UiTransaction> transactions);
 }

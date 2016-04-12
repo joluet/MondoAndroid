@@ -22,7 +22,7 @@ import tech.jonas.mondoandroid.R;
 import tech.jonas.mondoandroid.api.ApiComponent;
 import tech.jonas.mondoandroid.api.authentication.OauthManager;
 import tech.jonas.mondoandroid.di.ComponentProvider;
-import tech.jonas.mondoandroid.ui.model.Transaction;
+import tech.jonas.mondoandroid.ui.model.UiTransaction;
 
 public class MainActivity extends RxAppCompatActivity implements HomeView {
 
@@ -110,7 +110,7 @@ public class MainActivity extends RxAppCompatActivity implements HomeView {
     }
 
     @Override
-    public void setTransactions(List<Transaction> transactions) {
+    public void setTransactions(List<UiTransaction> transactions) {
         transactionAdapter.setTransactions(transactions);
     }
 
