@@ -28,10 +28,10 @@ public class TransactionMapper {
             declineReason = DeclineReason.parse(apiTransaction.declineReason);
         }
         if (apiTransaction.merchant != null) {
-            return new UiTransaction(stringProvider.getFormattedGbp(amount, apiTransaction.merchant.emoji), apiTransaction.description, apiTransaction.category,
+            return new UiTransaction(apiTransaction.id, stringProvider.getFormattedGbp(amount, apiTransaction.merchant.emoji), apiTransaction.description, apiTransaction.category,
                     apiTransaction.created, declineReason, apiTransaction.merchant.name, apiTransaction.merchant.logo);
         } else {
-            return new UiTransaction(stringProvider.getFormattedGbp(amount, ""), apiTransaction.description, apiTransaction.category,
+            return new UiTransaction(apiTransaction.id, stringProvider.getFormattedGbp(amount, ""), apiTransaction.description, apiTransaction.category,
                     apiTransaction.created, declineReason, apiTransaction.description, "");
         }
     }

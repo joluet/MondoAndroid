@@ -1,7 +1,10 @@
 package tech.jonas.mondoandroid.ui.model;
 
-public class UiTransaction {
+import java.io.Serializable;
 
+public class UiTransaction implements Serializable {
+
+    public final String id;
     public final String formattedAmount;
     public final String description;
     public final String category;
@@ -10,7 +13,8 @@ public class UiTransaction {
     public final String merchantName;
     public final String merchantLogo;
 
-    public UiTransaction(String formattedAmount, String description, String category, String created, DeclineReason declineReason, String merchantName, String merchantLogo) {
+    public UiTransaction(String id, String formattedAmount, String description, String category, String created, DeclineReason declineReason, String merchantName, String merchantLogo) {
+        this.id = id;
         this.formattedAmount = formattedAmount;
         this.description = description;
         this.category = category;
@@ -31,6 +35,7 @@ public class UiTransaction {
 
         UiTransaction that = (UiTransaction) o;
 
+        if (id != null ? !id.equals(that.id) : that.id != null) return false;
         if (formattedAmount != null ? !formattedAmount.equals(that.formattedAmount) : that.formattedAmount != null)
             return false;
         if (description != null ? !description.equals(that.description) : that.description != null)
@@ -42,12 +47,14 @@ public class UiTransaction {
         if (merchantName != null ? !merchantName.equals(that.merchantName) : that.merchantName != null)
             return false;
         return merchantLogo != null ? merchantLogo.equals(that.merchantLogo) : that.merchantLogo == null;
+
     }
 
     @Override
     public String toString() {
         return "UiTransaction{" +
-                "formattedAmount='" + formattedAmount + '\'' +
+                "id='" + id + '\'' +
+                ", formattedAmount='" + formattedAmount + '\'' +
                 ", description='" + description + '\'' +
                 ", category='" + category + '\'' +
                 ", created='" + created + '\'' +

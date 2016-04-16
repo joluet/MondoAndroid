@@ -2,7 +2,6 @@ package tech.jonas.mondoandroid.features.home;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -22,6 +21,7 @@ import tech.jonas.mondoandroid.R;
 import tech.jonas.mondoandroid.api.ApiComponent;
 import tech.jonas.mondoandroid.api.authentication.OauthManager;
 import tech.jonas.mondoandroid.di.ComponentProvider;
+import tech.jonas.mondoandroid.features.transaction.TransactionActivity;
 import tech.jonas.mondoandroid.ui.model.UiTransaction;
 
 public class MainActivity extends RxAppCompatActivity implements HomeView {
@@ -33,6 +33,7 @@ public class MainActivity extends RxAppCompatActivity implements HomeView {
     private TransactionAdapter transactionAdapter;
     private SwipeRefreshLayout swipeContainer;
 
+    @SuppressWarnings("unchecked")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,11 +55,12 @@ public class MainActivity extends RxAppCompatActivity implements HomeView {
         transactionAdapter = new TransactionAdapter(getApplicationContext());
         rvTransactions.setAdapter(transactionAdapter);
         rvTransactions.addItemDecoration(new StickyHeaderDecoration(transactionAdapter));
-        transactionAdapter.setOnTransactionClickListener(v ->
-                Snackbar.make(rvTransactions, "show details", Snackbar.LENGTH_SHORT).show());
+        transactionAdapter.setOnTransactionClickListener((transaction, views) ->
+                TransactionActivity.start(this, transaction, views));
         swipeContainer = (SwipeRefreshLayout) findViewById(R.id.swipe_container);
 
         // Setup refresh listener which triggers new data loading
+        assert swipeContainer != null;
         swipeContainer.setOnRefreshListener(() -> presenter.onRefresh());
         presenter.onBindView(getIntent().getData());
     }

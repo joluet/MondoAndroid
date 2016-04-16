@@ -8,6 +8,7 @@ import javax.inject.Singleton;
 
 import dagger.Component;
 import tech.jonas.mondoandroid.data.IntentFactory;
+import tech.jonas.mondoandroid.features.home.SubscriptionManager;
 import tech.jonas.mondoandroid.utils.SchedulerProvider;
 
 @Singleton
@@ -22,4 +23,6 @@ public interface MondoComponent {
     IntentFactory intentFactory();
 
     SchedulerProvider schedulerProvider();
+
+    SubscriptionManager subscriptionManager();
 }

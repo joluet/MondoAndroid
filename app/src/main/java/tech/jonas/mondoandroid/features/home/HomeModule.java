@@ -1,11 +1,8 @@
 package tech.jonas.mondoandroid.features.home;
 
-import com.f2prateek.rx.preferences.Preference;
-
 import dagger.Module;
 import dagger.Provides;
 import tech.jonas.mondoandroid.api.MondoService;
-import tech.jonas.mondoandroid.api.authentication.AccessToken;
 import tech.jonas.mondoandroid.api.authentication.OauthManager;
 import tech.jonas.mondoandroid.di.scopes.HomeScope;
 import tech.jonas.mondoandroid.utils.SchedulerProvider;
@@ -29,7 +26,6 @@ public class HomeModule {
     HomePresenter provideHomePresenter(HomeView view, HomeStringProvider stringProvider,
                                        SubscriptionManager subscriptionManager,
                                        OauthManager oauthManager, MondoService mondoService,
-                                       @AccessToken Preference<String> accessToken,
                                        SchedulerProvider schedulerProvider) {
         return HomePresenterImpl.builder()
                 .withSubscriptionManager(subscriptionManager)
@@ -37,14 +33,7 @@ public class HomeModule {
                 .withView(view)
                 .withOauthManager(oauthManager)
                 .withMondoService(mondoService)
-                .withAccessToken(accessToken)
                 .withSchedulerProvider(schedulerProvider)
                 .build();
-    }
-
-    @Provides
-    @HomeScope
-    SubscriptionManager provideSubscriptionManager() {
-        return new SubscriptionManager();
     }
 }

@@ -7,11 +7,13 @@ import retrofit2.http.FieldMap;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
+import retrofit2.http.Path;
 import retrofit2.http.Query;
 import rx.Observable;
 import tech.jonas.mondoandroid.api.model.AccessTokenResponse;
 import tech.jonas.mondoandroid.api.model.Accounts;
 import tech.jonas.mondoandroid.api.model.Balance;
+import tech.jonas.mondoandroid.api.model.Transaction;
 import tech.jonas.mondoandroid.api.model.TransactionList;
 import tech.jonas.mondoandroid.api.model.WebhookResponse;
 
@@ -34,4 +36,6 @@ public interface MondoService {
     @POST("/webhooks")
     Observable<WebhookResponse> registerWebhook(@Field("account_id") String accountId, @Field("url") String url);
 
+    @GET("/transaction/{id}")
+    Observable<Transaction> getTransaction(@Path("id") String transactionId);
 }

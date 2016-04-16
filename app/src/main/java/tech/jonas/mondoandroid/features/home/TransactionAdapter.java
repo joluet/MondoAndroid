@@ -50,9 +50,16 @@ public class TransactionAdapter extends RecyclerView.Adapter implements StickyHe
                 .centerCrop()
                 .into(transactionViewHolder.ivLogo);
 
+        final int transactionLogoSize = appContext.getResources().getDimensionPixelSize(R.dimen.transaction_merchant_logo_size);
+        Glide.with(appContext)
+                .load(transaction.merchantLogo)
+                .centerCrop()
+                .preload(transactionLogoSize, transactionLogoSize);
+
         transactionViewHolder.itemView.setOnClickListener(v -> {
             if (onTransactionClickListener != null) {
-                onTransactionClickListener.onClick(transaction);
+                onTransactionClickListener.onClick(transaction, transactionViewHolder.ivLogo,
+                        transactionViewHolder.tvTitle, transactionViewHolder.tvAmount);
             }
         });
     }
@@ -99,7 +106,7 @@ public class TransactionAdapter extends RecyclerView.Adapter implements StickyHe
     }
 
     public interface OnTransactionClickListener {
-        void onClick(UiTransaction transaction);
+        void onClick(UiTransaction transaction, View... views);
     }
 
     private class TransactionViewHolder extends RecyclerView.ViewHolder {

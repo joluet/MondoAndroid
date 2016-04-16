@@ -6,4 +6,5 @@
     <string name="transaction_declined">"Declined: %s"</string>
     <string name="notification_title">New Transaction</string>
     <string name="amount_and_merchant">%1$s, %2$s</string>
+    <string name="description_merchant_logo">Merchant logo</string>
 </resources>

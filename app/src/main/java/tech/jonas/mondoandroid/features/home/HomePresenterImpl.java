@@ -11,7 +11,6 @@ import rx.Observable;
 import rx.Subscription;
 import tech.jonas.mondoandroid.api.Config;
 import tech.jonas.mondoandroid.api.MondoService;
-import tech.jonas.mondoandroid.api.authentication.AccessToken;
 import tech.jonas.mondoandroid.api.authentication.OauthManager;
 import tech.jonas.mondoandroid.ui.model.BalanceMapper;
 import tech.jonas.mondoandroid.ui.model.TransactionMapper;
@@ -25,7 +24,6 @@ public class HomePresenterImpl implements HomePresenter {
     private final HomeView view;
     private final OauthManager oauthManager;
     private final MondoService mondoService;
-    private final @AccessToken Preference<String> accessToken;
     private final SchedulerProvider schedulerProvider;
 
     private HomePresenterImpl(Builder builder) {
@@ -34,7 +32,6 @@ public class HomePresenterImpl implements HomePresenter {
         view = builder.view;
         oauthManager = builder.oauthManager;
         mondoService = builder.mondoService;
-        accessToken = builder.accessToken;
         schedulerProvider = builder.schedulerProvider;
     }
 
@@ -45,7 +42,7 @@ public class HomePresenterImpl implements HomePresenter {
     @Override
     public void onBindView(Uri uri) {
         view.setIsLoading(true);
-        if (!accessToken.isSet() && uri == null) {
+        if (!oauthManager.isAuthenticated() && uri == null) {
             view.startLoginActivity();
         } else if (uri != null && "mondo.co.uk".equals(uri.getHost())) {
             final Observable<String> tokenObservable = oauthManager.getAuthToken(uri).cache();
@@ -63,8 +60,7 @@ public class HomePresenterImpl implements HomePresenter {
                     .subscribe(webhook -> {
                     }, throwable -> RxUtils.crashOnError());
             subscriptionManager.add(webhookSub);
-        }
-        if (accessToken.isSet()) {
+        } else {
             getTransactionsAndUpdateUI();
         }
     }
@@ -80,6 +76,21 @@ public class HomePresenterImpl implements HomePresenter {
         getTransactionsAndUpdateUI();
     }
 
+    private void refreshTokenAndUpdateUI() {
+        Subscription tokenSub = oauthManager.refreshAuthToken()
+                .compose(schedulerProvider.getSchedulers())
+                .subscribe(token -> {
+                    getTransactionsAndUpdateUI();
+                }, throwable -> {
+                    if (throwable instanceof HttpException) {
+                        view.startLoginActivity();
+                    } else {
+                        RxUtils.crashOnError();
+                    }
+                });
+        subscriptionManager.add(tokenSub);
+    }
+
     private void getTransactionsAndUpdateUI() {
         Subscription balanceSub = mondoService.getBalance(Config.ACCOUNT_ID)
                 .compose(schedulerProvider.getSchedulers())
@@ -88,7 +99,7 @@ public class HomePresenterImpl implements HomePresenter {
                     view.setTitle(stringProvider.getFormattedBalance(balance.formattedAmount));
                 }, throwable -> {
                     if (throwable instanceof HttpException) {
-                        view.startLoginActivity();
+                        refreshTokenAndUpdateUI();
                     } else {
                         RxUtils.crashOnError();
                     }
@@ -106,8 +117,7 @@ public class HomePresenterImpl implements HomePresenter {
                 .subscribe(view::setTransactions,
                         throwable -> {
                             if (throwable instanceof HttpException) {
-                                accessToken.delete();
-                                view.startLoginActivity();
+                                refreshTokenAndUpdateUI();
                             } else {
                                 RxUtils.crashOnError();
                             }
@@ -123,12 +133,8 @@ public class HomePresenterImpl implements HomePresenter {
         IBuild withSchedulerProvider(SchedulerProvider val);
     }
 
-    interface IAccessToken {
-        ISchedulerProvider withAccessToken(Preference<String> val);
-    }
-
     interface IMondoService {
-        IAccessToken withMondoService(MondoService val);
+        ISchedulerProvider withMondoService(MondoService val);
     }
 
     interface IOauthManager {
@@ -147,7 +153,7 @@ public class HomePresenterImpl implements HomePresenter {
         IStringProvider withSubscriptionManager(SubscriptionManager val);
     }
 
-    public static final class Builder implements ISchedulerProvider, IAccessToken, IMondoService, IOauthManager, IView, IStringProvider, ISubscriptionManager, IBuild {
+    public static final class Builder implements ISchedulerProvider, IMondoService, IOauthManager, IView, IStringProvider, ISubscriptionManager, IBuild {
         private Preference<String> accessToken;
         private MondoService mondoService;
         private OauthManager oauthManager;
@@ -166,13 +172,7 @@ public class HomePresenterImpl implements HomePresenter {
         }
 
         @Override
-        public ISchedulerProvider withAccessToken(Preference<String> val) {
-            accessToken = val;
-            return this;
-        }
-
-        @Override
-        public IAccessToken withMondoService(MondoService val) {
+        public ISchedulerProvider withMondoService(MondoService val) {
             mondoService = val;
             return this;
         }

@@ -23,6 +23,7 @@ import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 import tech.jonas.mondoandroid.api.authentication.AccessToken;
 import tech.jonas.mondoandroid.api.authentication.OauthInterceptor;
+import tech.jonas.mondoandroid.api.authentication.RefreshToken;
 import tech.jonas.mondoandroid.di.scopes.ApiScope;
 import tech.jonas.mondoandroid.features.home.HomeStringProvider;
 
@@ -31,6 +32,7 @@ import static com.jakewharton.byteunits.DecimalByteUnit.MEGABYTES;
 @Module
 public final class ApiModule {
     public static final String PREF_KEY_ACCESS_TOKEN = "access-token";
+    public static final String PREF_KEY_REFRESH_TOKEN = "refresh-token";
     private static final int DISK_CACHE_SIZE = (int) MEGABYTES.toBytes(50);
     private static final HttpUrl PRODUCTION_API_URL = HttpUrl.parse(Config.BASE_URL);
     private static final HttpUrl GCM_API_URL = HttpUrl.parse(Config.GCM_URL);
@@ -139,6 +141,13 @@ public final class ApiModule {
     @AccessToken
     Preference<String> provideAccessToken(RxSharedPreferences prefs) {
         return prefs.getString(PREF_KEY_ACCESS_TOKEN);
+    }
+
+    @Provides
+    @ApiScope
+    @RefreshToken
+    Preference<String> provideRefreshToken(RxSharedPreferences prefs) {
+        return prefs.getString(PREF_KEY_REFRESH_TOKEN);
     }
 
     @Provides
