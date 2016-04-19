@@ -24,7 +24,7 @@ public class HomeStringProvider {
         return context.getString(R.string.formatted_balance, formattedAmount);
     }
 
-    public String getAverageSpendText(String averageSpend, String merchant) {
-        return context.getString(R.string.average_spend, averageSpend, merchant);
+    public String getAverageSpendText(String averageSpend) {
+        return context.getString(R.string.average_spend, averageSpend);
     }
 }

@@ -31,7 +31,7 @@ public class TransactionPresenterImpl implements TransactionPresenter {
     public void onBindView(UiTransaction transaction) {
         if(transaction.hasSpending()) {
             String averageSpend = stringProvider.getFormattedGbp(transaction.spending.averageSpend / BalanceMapper.CENTS_PER_POUND);
-            view.setAverageSpend(stringProvider.getAverageSpendText(averageSpend, transaction.merchantName));
+            view.setAverageSpend(stringProvider.getAverageSpendText(averageSpend));
         }
         view.setAmount(transaction.formattedAmount);
         view.setMerchantName(transaction.merchantName);

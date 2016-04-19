@@ -86,7 +86,7 @@ public class HomePresenterTest {
         when(mockMondoService.getTransactions(anyString(), anyString())).thenReturn(Observable.empty());
 
         homePresenter.onBindView(null);
-        verify(mockHomeView).setTitle(eq(stringProvider.getFormattedBalance("£12.34 ")));
+        verify(mockHomeView).setTitle(eq(stringProvider.getFormattedBalance("12.34 ")));
     }
 
     @Test
@@ -100,7 +100,7 @@ public class HomePresenterTest {
         when(mockMondoService.getTransactions(anyString(), anyString())).thenReturn(Observable.just(transactionList));
 
         homePresenter.onBindView(null);
-        final UiTransaction expectedTransaction = new UiTransaction("0", "£12.34 ", "description", "category", "created", null, "merchant name", "logo url", new Spending(1234L, 1234L, 1));
+        final UiTransaction expectedTransaction = new UiTransaction("0", "12.34 ", "description", "category", "created", null, "merchant name", "logo url", new Spending(1234L, 1234L, 1));
         verify(mockHomeView).setTransactions(Collections.singletonList(expectedTransaction));
     }
 

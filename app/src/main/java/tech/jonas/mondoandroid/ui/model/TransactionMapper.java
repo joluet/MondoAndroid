@@ -26,7 +26,7 @@ public class TransactionMapper {
     }
 
     public static UiTransaction map(HomeStringProvider stringProvider, Transaction apiTransaction, Map<Merchant, Spending> spendingPerMerchant) {
-        final double amount = apiTransaction.amount / CENTS_PER_POUND;
+        final double amount = Math.abs(apiTransaction.amount) / CENTS_PER_POUND;
         final DeclineReason declineReason;
         if (apiTransaction.declineReason == null) {
             declineReason = null;

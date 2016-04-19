@@ -15,21 +15,10 @@
         android:transitionName="logo" />
 
     <TextView
-        android:id="@+id/tv_merchant"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/iv_logo"
-        android:layout_marginTop="10dp"
-        android:textColor="@color/colorPrimaryDark"
-        android:textSize="24sp"
-        android:transitionName="merchant"
-        tools:text="Merchant Name" />
-
-    <TextView
         android:id="@+id/tv_amount"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/tv_merchant"
+        android:layout_below="@id/iv_logo"
         android:layout_marginTop="10dp"
         android:textColor="@color/colorPrimaryDark"
         android:textSize="@dimen/transaction_amount_text_size"
@@ -37,10 +26,21 @@
         tools:text="23.03£" />
 
     <TextView
-        android:id="@+id/tv_average"
+        android:id="@+id/tv_merchant"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/tv_amount"
+        android:layout_marginTop="10dp"
+        android:textColor="@color/colorPrimaryDark"
+        android:textSize="18sp"
+        android:transitionName="merchant"
+        tools:text="Merchant Name" />
+
+    <TextView
+        android:id="@+id/tv_average"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tv_merchant"
         android:layout_marginTop="10dp"
         android:textColor="@color/colorPrimaryDark"
         android:textSize="@dimen/transaction_history_text_size"
