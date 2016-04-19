@@ -13,10 +13,18 @@ public class HomeStringProvider {
     }
 
     public String getFormattedGbp(double amount, String emoji) {
-        return context.getString(R.string.formatted_amount_gbp, amount, emoji);
+        return context.getString(R.string.formatted_amount_gbp_with_emoji, amount, emoji);
+    }
+
+    public String getFormattedGbp(double amount) {
+        return context.getString(R.string.formatted_amount_gbp, amount);
     }
 
     public String getFormattedBalance(String formattedAmount) {
         return context.getString(R.string.formatted_balance, formattedAmount);
+    }
+
+    public String getAverageSpendText(String averageSpend, String merchant) {
+        return context.getString(R.string.average_spend, averageSpend, merchant);
     }
 }

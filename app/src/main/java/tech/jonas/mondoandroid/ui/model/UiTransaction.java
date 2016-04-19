@@ -12,8 +12,9 @@ public class UiTransaction implements Serializable {
     public final DeclineReason declineReason;
     public final String merchantName;
     public final String merchantLogo;
+    public final Spending spending;
 
-    public UiTransaction(String id, String formattedAmount, String description, String category, String created, DeclineReason declineReason, String merchantName, String merchantLogo) {
+    public UiTransaction(String id, String formattedAmount, String description, String category, String created, DeclineReason declineReason, String merchantName, String merchantLogo, Spending spending) {
         this.id = id;
         this.formattedAmount = formattedAmount;
         this.description = description;
@@ -22,10 +23,15 @@ public class UiTransaction implements Serializable {
         this.declineReason = declineReason;
         this.merchantName = merchantName;
         this.merchantLogo = merchantLogo;
+        this.spending = spending;
     }
 
     public boolean isDeclined() {
         return declineReason != null;
+    }
+
+    public boolean hasSpending() {
+        return spending != null;
     }
 
     @Override
@@ -46,7 +52,9 @@ public class UiTransaction implements Serializable {
         if (declineReason != that.declineReason) return false;
         if (merchantName != null ? !merchantName.equals(that.merchantName) : that.merchantName != null)
             return false;
-        return merchantLogo != null ? merchantLogo.equals(that.merchantLogo) : that.merchantLogo == null;
+        if (merchantLogo != null ? !merchantLogo.equals(that.merchantLogo) : that.merchantLogo != null)
+            return false;
+        return spending != null ? spending.equals(that.spending) : that.spending == null;
 
     }
 
@@ -61,6 +69,7 @@ public class UiTransaction implements Serializable {
                 ", declineReason=" + declineReason +
                 ", merchantName='" + merchantName + '\'' +
                 ", merchantLogo='" + merchantLogo + '\'' +
+                ", spending=" + spending +
                 '}';
     }
 

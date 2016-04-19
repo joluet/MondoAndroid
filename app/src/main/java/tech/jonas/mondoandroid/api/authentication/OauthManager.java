@@ -73,11 +73,9 @@ public class OauthManager {
         params.put("redirect_uri", "https://mondo.co.uk");
         params.put("code", data.getQueryParameter("code"));
         return mondoService.getAccessToken(params)
-                .map(accessTokenResponse -> {
-                    accessToken.set(accessTokenResponse.accessToken);
-                    refreshToken.set(accessTokenResponse.refreshToken);
-                    return accessTokenResponse.accessToken;
-                });
+                .doOnNext(tokenResponse -> accessToken.set(tokenResponse.accessToken))
+                .doOnNext(tokenResponse -> refreshToken.set(tokenResponse.refreshToken))
+                .map(accessTokenResponse -> accessTokenResponse.accessToken);
     }
 
     public Observable<String> refreshAuthToken() {

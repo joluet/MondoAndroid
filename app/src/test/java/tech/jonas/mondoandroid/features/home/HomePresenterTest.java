@@ -18,6 +18,7 @@ import tech.jonas.mondoandroid.api.model.Balance;
 import tech.jonas.mondoandroid.api.model.Merchant;
 import tech.jonas.mondoandroid.api.model.Transaction;
 import tech.jonas.mondoandroid.api.model.TransactionList;
+import tech.jonas.mondoandroid.ui.model.Spending;
 import tech.jonas.mondoandroid.ui.model.UiTransaction;
 import tech.jonas.mondoandroid.ui.model.UiTransaction.DeclineReason;
 import tech.jonas.mondoandroid.utils.SchedulerProvider;
@@ -92,14 +93,14 @@ public class HomePresenterTest {
     public void shouldDisplayTransactions() {
         when(mockOauthManager.isAuthenticated()).thenReturn(true);
         final Balance balance = new Balance(1234L, "GBP", 2222L);
-        final Merchant merchant = new Merchant("merchant name", "", "logo url");
-        final Transaction transaction = new Transaction("0", 1234L, "description", "CARD_BLOCKED", "GBP", "category", "created", 3244L, merchant);
+        final Merchant merchant = new Merchant("id", "merchant name", "", "logo url");
+        final Transaction transaction = new Transaction("0", 1234L, "description", null, "GBP", "category", "created", 3244L, merchant);
         final TransactionList transactionList = new TransactionList(Collections.singletonList(transaction));
         when(mockMondoService.getBalance(anyString())).thenReturn(Observable.just(balance));
         when(mockMondoService.getTransactions(anyString(), anyString())).thenReturn(Observable.just(transactionList));
 
         homePresenter.onBindView(null);
-        final UiTransaction expectedTransaction = new UiTransaction("0", "£12.34 ", "description", "category", "created", DeclineReason.CARD_BLOCKED, "merchant name", "logo url");
+        final UiTransaction expectedTransaction = new UiTransaction("0", "£12.34 ", "description", "category", "created", null, "merchant name", "logo url", new Spending(1234L, 1234L, 1));
         verify(mockHomeView).setTransactions(Collections.singletonList(expectedTransaction));
     }
 

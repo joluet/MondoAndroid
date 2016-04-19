@@ -5,6 +5,7 @@
     <dimen name="fab_margin">16dp</dimen>
     <dimen name="text_margin">16dp</dimen>
     <dimen name="transaction_list_text_size">22sp</dimen>
-    <dimen name="transaction_text_size">22sp</dimen>
-    <dimen name="transaction_merchant_logo_size">100dp</dimen>
+    <dimen name="transaction_amount_text_size">22sp</dimen>
+    <dimen name="transaction_history_text_size">16sp</dimen>
+    <dimen name="transaction_merchant_logo_size">120dp</dimen>
 </resources>

@@ -1,10 +1,12 @@
 <resources>
     <string name="app_name">Mondo</string>
     <string name="action_settings">Settings</string>
-    <string name="formatted_amount_gbp">£%1$.2f %2$s</string>
+    <string name="formatted_amount_gbp_with_emoji">£%1$.2f %2$s</string>
+    <string name="formatted_amount_gbp">£%1$.2f</string>
     <string name="formatted_balance">Balance: %s</string>
     <string name="transaction_declined">"Declined: %s"</string>
     <string name="notification_title">New Transaction</string>
     <string name="amount_and_merchant">%1$s, %2$s</string>
     <string name="description_merchant_logo">Merchant logo</string>
+    <string name="average_spend">On average you spend %1$s at %2$s</string>
 </resources>

@@ -1,10 +1,11 @@
 package tech.jonas.mondoandroid.features.home;
 
 import android.net.Uri;
-
-import com.f2prateek.rx.preferences.Preference;
+import android.support.v4.util.Pair;
+import android.util.Log;
 
 import java.util.Collections;
+import java.util.Map;
 
 import retrofit2.adapter.rxjava.HttpException;
 import rx.Observable;
@@ -12,8 +13,13 @@ import rx.Subscription;
 import tech.jonas.mondoandroid.api.Config;
 import tech.jonas.mondoandroid.api.MondoService;
 import tech.jonas.mondoandroid.api.authentication.OauthManager;
+import tech.jonas.mondoandroid.api.model.Merchant;
+import tech.jonas.mondoandroid.api.model.Transaction;
+import tech.jonas.mondoandroid.api.model.TransactionList;
 import tech.jonas.mondoandroid.ui.model.BalanceMapper;
+import tech.jonas.mondoandroid.ui.model.Spending;
 import tech.jonas.mondoandroid.ui.model.TransactionMapper;
+import tech.jonas.mondoandroid.utils.ListUtils;
 import tech.jonas.mondoandroid.utils.RxUtils;
 import tech.jonas.mondoandroid.utils.SchedulerProvider;
 
@@ -77,7 +83,9 @@ public class HomePresenterImpl implements HomePresenter {
     }
 
     private void refreshTokenAndUpdateUI() {
-        Subscription tokenSub = oauthManager.refreshAuthToken()
+        final Observable<String> tokenObservable = oauthManager.refreshAuthToken().cache();
+
+        Subscription tokenSub = tokenObservable
                 .compose(schedulerProvider.getSchedulers())
                 .subscribe(token -> {
                     getTransactionsAndUpdateUI();
@@ -89,6 +97,12 @@ public class HomePresenterImpl implements HomePresenter {
                     }
                 });
         subscriptionManager.add(tokenSub);
+
+        Subscription webhookSub = tokenObservable.flatMap(token ->
+                oauthManager.registerWebhook()).compose(schedulerProvider.getSchedulers())
+                .subscribe(webhook -> {
+                }, throwable -> RxUtils.crashOnError());
+        subscriptionManager.add(webhookSub);
     }
 
     private void getTransactionsAndUpdateUI() {
@@ -106,23 +120,52 @@ public class HomePresenterImpl implements HomePresenter {
                 });
         subscriptionManager.add(balanceSub);
 
-        Subscription transactionSub = mondoService.getTransactions(Config.ACCOUNT_ID, "merchant")
+        Observable<TransactionList> transactionObservable = mondoService.getTransactions(Config.ACCOUNT_ID, "merchant").cache();
+
+        Subscription transactionSub = calculateSpendingPerMerchant(transactionObservable)
+                .flatMap(spendingPerMerchant -> transactionObservable
+                        .doOnCompleted(() -> view.setIsLoading(false))
+                        .compose(TransactionMapper.map(stringProvider, spendingPerMerchant))
+                        .map(transactionsToDisplay -> {
+                            Collections.reverse(transactionsToDisplay);
+                            return transactionsToDisplay;
+                        }))
                 .compose(schedulerProvider.getSchedulers())
-                .doOnCompleted(() -> view.setIsLoading(false))
-                .compose(TransactionMapper.map(stringProvider))
-                .map(transactions -> {
-                    Collections.reverse(transactions);
-                    return transactions;
-                })
-                .subscribe(view::setTransactions,
-                        throwable -> {
-                            if (throwable instanceof HttpException) {
-                                refreshTokenAndUpdateUI();
-                            } else {
-                                RxUtils.crashOnError();
-                            }
-                        });
+                .subscribe(view::setTransactions, throwable -> {
+                    if (throwable instanceof HttpException) {
+                        refreshTokenAndUpdateUI();
+                    } else {
+                        RxUtils.crashOnError();
+                    }
+                });
         subscriptionManager.add(transactionSub);
+    }
+
+    private Observable<Map<Merchant, Spending>> calculateSpendingPerMerchant(Observable<TransactionList> transactionObservable) {
+        Observable<Transaction> validTransactions = transactionObservable
+                .map(transactionList -> transactionList.transactions)
+                .flatMap(Observable::from)
+                .filter(transaction -> transaction.declineReason == null)
+                .filter(transaction -> transaction.merchant != null);
+
+        Observable<Merchant> merchants = validTransactions
+                .map(transaction -> transaction.merchant)
+                .distinct(merchant -> merchant.id);
+
+        return merchants.flatMap(merchant -> validTransactions
+                .filter(transaction -> merchant.id.equals(transaction.merchant.id))
+                .toList()
+                .map(transactions -> {
+                    long total = 0;
+                    for (Transaction transaction : transactions) {
+                        total += transaction.amount;
+                    }
+                    int count = transactions.size();
+                    long average = total / count;
+                    return new Pair<>(merchant, new Spending(total, average, count));
+                }))
+                .toList()
+                .map(ListUtils::toMap);
     }
 
     interface IBuild {
@@ -154,7 +197,6 @@ public class HomePresenterImpl implements HomePresenter {
     }
 
     public static final class Builder implements ISchedulerProvider, IMondoService, IOauthManager, IView, IStringProvider, ISubscriptionManager, IBuild {
-        private Preference<String> accessToken;
         private MondoService mondoService;
         private OauthManager oauthManager;
         private HomeView view;

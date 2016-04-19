@@ -5,5 +5,7 @@ public interface TransactionView {
 
     void setMerchantName(String merchantName);
 
+    void setAverageSpend(String averageSpend);
+
     void setLogoUrl(String logoUrl);
 }

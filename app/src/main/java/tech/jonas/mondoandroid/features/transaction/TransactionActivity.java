@@ -25,6 +25,7 @@ public class TransactionActivity extends AppCompatActivity implements Transactio
     public static final String ARG_TRANSACTION = "arg_transaction";
     @Inject TransactionPresenter presenter;
     private TextView amountView;
+    private TextView averageSpendView;
     private TextView merchantView;
     private ImageView logoView;
 
@@ -45,6 +46,7 @@ public class TransactionActivity extends AppCompatActivity implements Transactio
         setContentView(R.layout.activity_transaction);
 
         amountView = (TextView) findViewById(R.id.tv_amount);
+        averageSpendView = (TextView) findViewById(R.id.tv_average);
         merchantView = (TextView) findViewById(R.id.tv_merchant);
         logoView = (ImageView) findViewById(R.id.iv_logo);
 
@@ -72,6 +74,11 @@ public class TransactionActivity extends AppCompatActivity implements Transactio
     @Override
     public void setMerchantName(String merchantName) {
         merchantView.setText(merchantName);
+    }
+
+    @Override
+    public void setAverageSpend(String averageSpend) {
+        averageSpendView.setText(averageSpend);
     }
 
     @Override

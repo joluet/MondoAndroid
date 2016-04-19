@@ -3,6 +3,7 @@ package tech.jonas.mondoandroid.features.transaction;
 import tech.jonas.mondoandroid.api.MondoService;
 import tech.jonas.mondoandroid.features.home.HomeStringProvider;
 import tech.jonas.mondoandroid.features.home.SubscriptionManager;
+import tech.jonas.mondoandroid.ui.model.BalanceMapper;
 import tech.jonas.mondoandroid.ui.model.UiTransaction;
 import tech.jonas.mondoandroid.utils.SchedulerProvider;
 
@@ -28,6 +29,10 @@ public class TransactionPresenterImpl implements TransactionPresenter {
 
     @Override
     public void onBindView(UiTransaction transaction) {
+        if(transaction.hasSpending()) {
+            String averageSpend = stringProvider.getFormattedGbp(transaction.spending.averageSpend / BalanceMapper.CENTS_PER_POUND);
+            view.setAverageSpend(stringProvider.getAverageSpendText(averageSpend, transaction.merchantName));
+        }
         view.setAmount(transaction.formattedAmount);
         view.setMerchantName(transaction.merchantName);
         view.setLogoUrl(transaction.merchantLogo);
