@@ -7,11 +7,15 @@
         <item name="android:statusBarColor">@android:color/transparent</item>
 
         <item name="android:windowActivityTransitions">true</item>
+
+        <!-- specify enter and exit transitions -->
+        <item name="android:windowEnterTransition">@transition/fade</item>
+        <item name="android:windowExitTransition">@transition/fade</item>
+
         <!-- specify shared element transitions -->
         <item name="android:windowSharedElementEnterTransition">
-            @transition/change_bounds_transform
-        </item>
-        <item name="android:windowSharedElementExitTransition">@transition/change_bounds_transform
-        </item>
+            @transition/change_bounds_transform</item>
+        <item name="android:windowSharedElementExitTransition">
+            @transition/change_bounds_transform</item>
     </style>
 </resources>
