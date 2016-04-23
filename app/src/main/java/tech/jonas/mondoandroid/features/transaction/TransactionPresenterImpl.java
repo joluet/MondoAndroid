@@ -34,7 +34,7 @@ public class TransactionPresenterImpl implements TransactionPresenter {
             view.setAverageSpend(stringProvider.getAverageSpendText(averageSpend));
         }
         if(transaction.hasMerchant()) {
-            view.setWindowTitle(transaction.merchantName);
+            view.setMerchantName(transaction.merchantName);
             view.setLogoUrl(transaction.merchantLogo);
             view.moveMapTo(transaction.latitude, transaction.longitude);
             view.addMapMarker(transaction.latitude, transaction.longitude, transaction.merchantName);

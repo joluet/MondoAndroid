@@ -41,7 +41,7 @@
         <activity
             android:name=".features.transaction.TransactionActivity"
             android:parentActivityName=".features.home.MainActivity"
-            android:theme="@style/AppTheme"/>
+            android:theme="@style/AppTheme.TranslucentActionbar"/>
 
         <receiver
             android:name="com.google.android.gms.gcm.GcmReceiver"

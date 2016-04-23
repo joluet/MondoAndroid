@@ -1,7 +1,7 @@
 package tech.jonas.mondoandroid.features.transaction;
 
 public interface TransactionView {
-    void setWindowTitle(String title);
+    void setMerchantName(String title);
 
     void addMapMarker(double lat, double lng, String title);
 

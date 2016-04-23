@@ -8,7 +8,7 @@
     <com.google.android.gms.maps.MapView
         android:id="@+id/map_view"
         android:layout_width="match_parent"
-        android:layout_height="230dp"
+        android:layout_height="320dp"
         android:layout_alignParentTop="true"
         map:cameraZoom="16"
         map:liteMode="true"

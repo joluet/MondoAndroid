@@ -70,6 +70,10 @@ public class TransactionActivity extends AppCompatActivity implements Transactio
         logoView = (ImageView) findViewById(R.id.iv_logo);
         mapView = (MapView) findViewById(R.id.map_view);
 
+        getWindow().getDecorView().setSystemUiVisibility(
+                View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                        | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
+
         mapView.onCreate(savedInstanceState);
 
         ApiComponent apiComponent = ((ComponentProvider<ApiComponent>) getApplicationContext()).getComponent();
@@ -102,10 +106,8 @@ public class TransactionActivity extends AppCompatActivity implements Transactio
     }
 
     @Override
-    public void setWindowTitle(String title) {
-        if(getSupportActionBar() != null) {
-            getSupportActionBar().setTitle(title);
-        }
+    public void setMerchantName(String title) {
+        merchantView.setText(title);
     }
 
     @Override

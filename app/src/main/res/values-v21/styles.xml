@@ -1,4 +1,4 @@
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources>
 
 
     <style name="LightActionBar" parent="@style/Widget.AppCompat.Light.ActionBar.Solid.Inverse">
@@ -9,6 +9,15 @@
     <style name="DarkActionBar" parent="@style/Widget.AppCompat.Light.ActionBar.Solid.Inverse">
         <item name="android:background">@color/colorPrimaryDark</item>
         <item name="background">@color/colorPrimaryDark</item>
+    </style>
+
+    <style name="TranslucentActionbar" parent="@style/ThemeOverlay.AppCompat.ActionBar">
+        <item name="android:background">@color/white_transparent</item>
+        <!-- Support library compatibility -->
+        <item name="background">@color/white_transparent</item>
+        <item name="android:colorControlNormal">@color/colorAccent</item>
+        <item name="colorControlNormal">@color/colorAccent</item>
+
     </style>
 
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
@@ -41,4 +50,14 @@
         <item name="android:actionBarStyle">@style/DarkActionBar</item>
         <item name="actionBarStyle">@style/DarkActionBar</item>
     </style>
+
+    <style name="AppTheme.TranslucentActionbar" parent="Theme.AppCompat.Light.DarkActionBar">
+        <item name="android:statusBarColor">@color/white_transparent</item>
+        <item name="android:actionBarStyle">@style/TranslucentActionbar</item>
+        <item name="android:windowActionBarOverlay">true</item>
+        <!-- Support library compatibility -->
+        <item name="actionBarStyle">@style/TranslucentActionbar</item>
+        <item name="windowActionBarOverlay">true</item>
+    </style>
+
 </resources>
