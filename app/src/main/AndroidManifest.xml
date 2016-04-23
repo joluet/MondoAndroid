@@ -40,7 +40,8 @@
 
         <activity
             android:name=".features.transaction.TransactionActivity"
-            android:parentActivityName=".features.home.MainActivity"/>
+            android:parentActivityName=".features.home.MainActivity"
+            android:theme="@style/AppTheme"/>
 
         <receiver
             android:name="com.google.android.gms.gcm.GcmReceiver"
@@ -60,6 +61,12 @@
             </intent-filter>
         </service>
 
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyDuagKqBxpfDFb0Ebt8sKaWsG_Ft5mPqJc"/>
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
     </application>
 
 </manifest>

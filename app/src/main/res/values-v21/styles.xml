@@ -1,12 +1,24 @@
-<resources>>
+<resources xmlns:tools="http://schemas.android.com/tools">
 
-    <style name="AppTheme.NoActionBar">
-        <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
-        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
-        <item name="android:statusBarColor">@android:color/transparent</item>
+
+    <style name="LightActionBar" parent="@style/Widget.AppCompat.Light.ActionBar.Solid.Inverse">
+        <item name="android:background">@color/colorPrimaryDark</item>
+        <item name="background">@color/colorPrimaryDark</item>
+    </style>
+
+    <style name="DarkActionBar" parent="@style/Widget.AppCompat.Light.ActionBar.Solid.Inverse">
+        <item name="android:background">@color/colorPrimaryDark</item>
+        <item name="background">@color/colorPrimaryDark</item>
+    </style>
+
+    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <item name="android:statusBarColor">@color/colorPrimaryDark</item>
+        <item name="android:actionBarStyle">@style/LightActionBar</item>
+        <item name="actionBarStyle">@style/LightActionBar</item>
 
         <item name="android:windowActivityTransitions">true</item>
+        <item name="android:windowContentTransitions">true</item>
+        <item name="android:windowSharedElementsUseOverlay">false</item>
 
         <!-- specify enter and exit transitions -->
         <item name="android:windowEnterTransition">@transition/fade</item>
@@ -14,8 +26,19 @@
 
         <!-- specify shared element transitions -->
         <item name="android:windowSharedElementEnterTransition">
-            @transition/change_bounds_transform</item>
+            @transition/change_bounds_transform
+        </item>
         <item name="android:windowSharedElementExitTransition">
-            @transition/change_bounds_transform</item>
+            @transition/change_bounds_transform
+        </item>
+    </style>
+
+    <style name="AppTheme.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:actionBarStyle">@style/DarkActionBar</item>
+        <item name="actionBarStyle">@style/DarkActionBar</item>
     </style>
 </resources>

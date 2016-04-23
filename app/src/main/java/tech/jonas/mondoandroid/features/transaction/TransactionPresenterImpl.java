@@ -33,9 +33,13 @@ public class TransactionPresenterImpl implements TransactionPresenter {
             String averageSpend = stringProvider.getFormattedGbp(transaction.spending.averageSpend / BalanceMapper.CENTS_PER_POUND);
             view.setAverageSpend(stringProvider.getAverageSpendText(averageSpend));
         }
+        if(transaction.hasMerchant()) {
+            view.setWindowTitle(transaction.merchantName);
+            view.setLogoUrl(transaction.merchantLogo);
+            view.moveMapTo(transaction.latitude, transaction.longitude);
+            view.addMapMarker(transaction.latitude, transaction.longitude, transaction.merchantName);
+        }
         view.setAmount(transaction.formattedAmount);
-        view.setMerchantName(transaction.merchantName);
-        view.setLogoUrl(transaction.merchantLogo);
     }
 
     @Override

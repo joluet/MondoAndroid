@@ -66,6 +66,7 @@ dependencies {
 
     compile 'jp.wasabeef:recyclerview-animators:2.2.1'
 
+    compile 'com.google.android.gms:play-services-maps:8.4.0'
     compile "com.google.android.gms:play-services-gcm:8.4.0"
 
     compile 'ca.barrenechea.header-decor:header-decor:0.2.6@aar'

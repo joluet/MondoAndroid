@@ -14,13 +14,13 @@ import rx.schedulers.Schedulers;
 import tech.jonas.mondoandroid.BuildConfig;
 import tech.jonas.mondoandroid.api.MondoService;
 import tech.jonas.mondoandroid.api.authentication.OauthManager;
+import tech.jonas.mondoandroid.api.model.Address;
 import tech.jonas.mondoandroid.api.model.Balance;
 import tech.jonas.mondoandroid.api.model.Merchant;
 import tech.jonas.mondoandroid.api.model.Transaction;
 import tech.jonas.mondoandroid.api.model.TransactionList;
 import tech.jonas.mondoandroid.ui.model.Spending;
 import tech.jonas.mondoandroid.ui.model.UiTransaction;
-import tech.jonas.mondoandroid.ui.model.UiTransaction.DeclineReason;
 import tech.jonas.mondoandroid.utils.SchedulerProvider;
 
 import static org.mockito.Matchers.anyString;
@@ -93,14 +93,14 @@ public class HomePresenterTest {
     public void shouldDisplayTransactions() {
         when(mockOauthManager.isAuthenticated()).thenReturn(true);
         final Balance balance = new Balance(1234L, "GBP", 2222L);
-        final Merchant merchant = new Merchant("id", "merchant name", "", "logo url");
+        final Merchant merchant = new Merchant("id", "merchant name", "", "logo url", new Address(12.2, 14.2));
         final Transaction transaction = new Transaction("0", 1234L, "description", null, "GBP", "category", "created", 3244L, merchant);
         final TransactionList transactionList = new TransactionList(Collections.singletonList(transaction));
         when(mockMondoService.getBalance(anyString())).thenReturn(Observable.just(balance));
         when(mockMondoService.getTransactions(anyString(), anyString())).thenReturn(Observable.just(transactionList));
 
         homePresenter.onBindView(null);
-        final UiTransaction expectedTransaction = new UiTransaction("0", "12.34 ", "description", "category", "created", null, "merchant name", "logo url", new Spending(1234L, 1234L, 1));
+        final UiTransaction expectedTransaction = new UiTransaction("0", "12.34 ", "description", "category", "created", null, "merchant name", "logo url", new Spending(1234L, 1234L, 1), 12.2, 14.2);
         verify(mockHomeView).setTransactions(Collections.singletonList(expectedTransaction));
     }
 

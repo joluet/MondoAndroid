@@ -34,11 +34,28 @@ public class TransactionMapper {
             declineReason = DeclineReason.parse(apiTransaction.declineReason);
         }
         if (apiTransaction.merchant != null && spendingPerMerchant != null) {
-            return new UiTransaction(apiTransaction.id, stringProvider.getFormattedGbp(amount, apiTransaction.merchant.emoji), apiTransaction.description, apiTransaction.category,
-                    apiTransaction.created, declineReason, apiTransaction.merchant.name, apiTransaction.merchant.logo, spendingPerMerchant.get(apiTransaction.merchant));
+            return UiTransaction.builder()
+                    .withId(apiTransaction.id)
+                    .withFormattedAmount(stringProvider.getFormattedGbp(amount, apiTransaction.merchant.emoji))
+                    .withDescription(apiTransaction.description)
+                    .withCategory(apiTransaction.category)
+                    .withCreated(apiTransaction.created)
+                    .withDeclineReason(declineReason)
+                    .withMerchantName(apiTransaction.merchant.name)
+                    .withMerchantLogo(apiTransaction.merchant.logo)
+                    .withSpending(spendingPerMerchant.get(apiTransaction.merchant))
+                    .withLatitude(apiTransaction.merchant.address.latitude)
+                    .withLongitude(apiTransaction.merchant.address.longitude)
+                    .build();
         } else {
-            return new UiTransaction(apiTransaction.id, stringProvider.getFormattedGbp(amount, ""), apiTransaction.description, apiTransaction.category,
-                    apiTransaction.created, declineReason, apiTransaction.description, "", null);
+            return UiTransaction.builder()
+                    .withId(apiTransaction.id)
+                    .withFormattedAmount(stringProvider.getFormattedGbp(amount, ""))
+                    .withDescription(apiTransaction.description)
+                    .withCategory(apiTransaction.category)
+                    .withCreated(apiTransaction.created)
+                    .withDeclineReason(declineReason)
+                    .build();
         }
     }
 }
