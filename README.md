@@ -2,7 +2,8 @@
 
 A basic Android app for [Mondo](https://getmondo.co.uk/). It lets you view your balance and a list of all transactions.
 
-![A screenshot](./screenshot.png?raw=true)
+![A screenshot](./screenshot_home.png?raw=true)
+![A screenshot](./screenshot_transaction.png?raw=true)
 
 ## Configuration
 If you have developer access to the Mondo API you can create a non-confidental auth client in the developer console.
