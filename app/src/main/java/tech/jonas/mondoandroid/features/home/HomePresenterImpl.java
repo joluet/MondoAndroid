@@ -158,7 +158,7 @@ public class HomePresenterImpl implements HomePresenter {
                 .map(transactions -> {
                     long total = 0;
                     for (Transaction transaction : transactions) {
-                        total += transaction.amount;
+                        total += Math.abs(transaction.amount);
                     }
                     int count = transactions.size();
                     long average = total / count;
