@@ -2,18 +2,12 @@ package tech.jonas.mondoandroid.features.transaction;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Color;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.ActivityOptionsCompat;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.util.Pair;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewTreeObserver;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -21,14 +15,8 @@ import com.bumptech.glide.Glide;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.MapView;
-import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 
 import javax.inject.Inject;
 
@@ -41,7 +29,8 @@ import tech.jonas.mondoandroid.utils.UiUtils;
 public class TransactionActivity extends AppCompatActivity implements TransactionView {
 
     public static final String ARG_TRANSACTION = "arg_transaction";
-    @Inject TransactionPresenter presenter;
+    @Inject
+    TransactionPresenter presenter;
     private TextView amountView;
     private TextView averageSpendView;
     private TextView merchantView;
@@ -84,6 +73,18 @@ public class TransactionActivity extends AppCompatActivity implements Transactio
 
         final UiTransaction transaction = (UiTransaction) getIntent().getSerializableExtra(ARG_TRANSACTION);
         presenter.onBindView(transaction);
+
+        // Postpone enter transition to avoid flashing navigation bar]
+        postponeEnterTransition();
+        final View decor = getWindow().getDecorView();
+        decor.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+            @Override
+            public boolean onPreDraw() {
+                decor.getViewTreeObserver().removeOnPreDrawListener(this);
+                startPostponedEnterTransition();
+                return true;
+            }
+        });
     }
 
     @Override
@@ -138,7 +139,6 @@ public class TransactionActivity extends AppCompatActivity implements Transactio
     public void setAverageSpend(String averageSpend) {
         averageSpendView.setText(averageSpend);
     }
-
 
 
     @Override

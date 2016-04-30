@@ -1,6 +1,5 @@
 package tech.jonas.mondoandroid.features.home;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
@@ -8,9 +7,12 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.Window;
 
 import com.trello.rxlifecycle.components.support.RxAppCompatActivity;
 
+import java.util.Arrays;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -27,8 +29,10 @@ import tech.jonas.mondoandroid.ui.model.UiTransaction;
 
 public class MainActivity extends RxAppCompatActivity implements HomeView {
 
-    @Inject HomePresenter presenter;
-    @Inject OauthManager oauthManager;
+    @Inject
+    HomePresenter presenter;
+    @Inject
+    OauthManager oauthManager;
     private Toolbar toolbar;
     private RecyclerView rvTransactions;
     private TransactionAdapter transactionAdapter;
@@ -57,8 +61,15 @@ public class MainActivity extends RxAppCompatActivity implements HomeView {
         transactionAdapter = new TransactionAdapter(getApplicationContext());
         rvTransactions.setAdapter(transactionAdapter);
         rvTransactions.addItemDecoration(new StickyHeaderDecoration(transactionAdapter));
-        transactionAdapter.setOnTransactionClickListener((transaction, views) ->
-                TransactionActivity.start(this, transaction, views));
+        transactionAdapter.setOnTransactionClickListener((transaction, views) -> {
+            // Add navigation bar view to transition animation
+            View navigationBar = findViewById(android.R.id.navigationBarBackground);
+            navigationBar.setTransitionName(Window.NAVIGATION_BAR_BACKGROUND_TRANSITION_NAME);
+            View[] viewArray = Arrays.copyOf(views, views.length + 1);
+            viewArray[viewArray.length - 1] = navigationBar;
+
+            TransactionActivity.start(this, transaction, viewArray);
+        });
         swipeContainer = (SwipeRefreshLayout) findViewById(R.id.swipe_container);
 
         // Setup refresh listener which triggers new data loading
