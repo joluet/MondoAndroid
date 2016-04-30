@@ -9,6 +9,7 @@ public class UiTransaction implements Serializable {
     public final String id;
     public final long pounds;
     public final long cents;
+    public final boolean isPositiveAmount;
     public final String formattedAmount;
     public final String description;
     public final String category;
@@ -20,10 +21,11 @@ public class UiTransaction implements Serializable {
     public final double latitude;
     public final double longitude;
 
-    public UiTransaction(String id, long pounds, long cents, String formattedAmount, String description, String category, String created, DeclineReason declineReason, String merchantName, String merchantLogo, Spending spending, double latitude, double longitude) {
+    public UiTransaction(String id, long pounds, long cents, boolean isPositiveAmount, String formattedAmount, String description, String category, String created, DeclineReason declineReason, String merchantName, String merchantLogo, Spending spending, double latitude, double longitude) {
         this.id = id;
         this.pounds = pounds;
         this.cents = cents;
+        this.isPositiveAmount = isPositiveAmount;
         this.formattedAmount = formattedAmount;
         this.description = description;
         this.category = category;
@@ -40,6 +42,7 @@ public class UiTransaction implements Serializable {
         id = builder.id;
         pounds = builder.pounds;
         cents = builder.cents;
+        isPositiveAmount = builder.isPositiveAmount;
         formattedAmount = builder.formattedAmount;
         description = builder.description;
         category = builder.category;
@@ -138,8 +141,12 @@ public class UiTransaction implements Serializable {
         IDescription withFormattedAmount(String val);
     }
 
+    interface IIsPositiveAmount {
+        IFormattedAmount withIsPositiveAmount(boolean val);
+    }
+
     interface ICents {
-        IFormattedAmount withCents(long val);
+        IIsPositiveAmount withCents(long val);
     }
 
     interface IPounds {
@@ -150,7 +157,7 @@ public class UiTransaction implements Serializable {
         IPounds withId(String val);
     }
 
-    public static final class Builder implements ILongitude, ILatitude, ISpending, IMerchantLogo, IMerchantName, IDeclineReason, ICreated, ICategory, IDescription, IFormattedAmount, ICents, IPounds, IId, IBuild {
+    public static final class Builder implements ILongitude, ILatitude, ISpending, IMerchantLogo, IMerchantName, IDeclineReason, ICreated, ICategory, IDescription, IFormattedAmount, IIsPositiveAmount, ICents, IPounds, IId, IBuild {
         private double longitude;
         private double latitude;
         private Spending spending;
@@ -161,6 +168,7 @@ public class UiTransaction implements Serializable {
         private String category;
         private String description;
         private String formattedAmount;
+        private boolean isPositiveAmount;
         private long cents;
         private long pounds;
         private String id;
@@ -229,7 +237,13 @@ public class UiTransaction implements Serializable {
         }
 
         @Override
-        public IFormattedAmount withCents(long val) {
+        public IFormattedAmount withIsPositiveAmount(boolean val) {
+            isPositiveAmount = val;
+            return this;
+        }
+
+        @Override
+        public IIsPositiveAmount withCents(long val) {
             cents = val;
             return this;
         }
@@ -260,6 +274,7 @@ public class UiTransaction implements Serializable {
 
         if (pounds != that.pounds) return false;
         if (cents != that.cents) return false;
+        if (isPositiveAmount != that.isPositiveAmount) return false;
         if (Double.compare(that.latitude, latitude) != 0) return false;
         if (Double.compare(that.longitude, longitude) != 0) return false;
         if (id != null ? !id.equals(that.id) : that.id != null) return false;
@@ -285,6 +300,7 @@ public class UiTransaction implements Serializable {
                 "id='" + id + '\'' +
                 ", pounds=" + pounds +
                 ", cents=" + cents +
+                ", isPositiveAmount=" + isPositiveAmount +
                 ", formattedAmount='" + formattedAmount + '\'' +
                 ", description='" + description + '\'' +
                 ", category='" + category + '\'' +

@@ -41,4 +41,9 @@ public class AmountView extends LinearLayout {
         poundsView.setText(String.valueOf(pounds));
         centsView.setText(getContext().getString(R.string.amount_cents, cents));
     }
+
+    public void setTextColor(int color) {
+        poundsView.setTextColor(color);
+        centsView.setTextColor(color);
+    }
 }

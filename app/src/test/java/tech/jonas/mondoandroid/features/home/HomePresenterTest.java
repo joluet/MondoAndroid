@@ -100,14 +100,14 @@ public class HomePresenterTest {
         when(mockOauthManager.isAuthenticated()).thenReturn(true);
         final Balance balance = new Balance(1234L, "GBP", 2222L);
         final Merchant merchant = new Merchant("id", "merchant name", "", "logo url", new Address(12.2, 14.2));
-        final Transaction transaction = new Transaction("0", 1234L, "description", null, "GBP", "category", "created", 3244L, merchant);
+        final Transaction transaction = new Transaction("0", -1234L, "description", null, "GBP", "category", "created", 3244L, merchant);
         final TransactionList transactionList = new TransactionList(Collections.singletonList(transaction));
         when(mockMondoService.getBalance(anyString())).thenReturn(Observable.just(balance));
         when(mockMondoService.getTransactions(anyString(), anyString())).thenReturn(Observable.just(transactionList));
 
         homePresenter.onBindView(null);
-        final UiTransaction expectedTransaction = new UiTransaction("0", 12, 34, "12.34 ", "description", "category", "created", null, "merchant name", "logo url", new Spending(1234L, 1234L, 1), 12.2, 14.2);
-        verify(mockHomeView).setTransactions(Collections.singletonList(expectedTransaction));
+        final UiTransaction expectedTransaction = new UiTransaction("0", 12, 34, false, "12.34 ", "description", "category", "created", null, "merchant name", "logo url", new Spending(1234L, 1234L, 1), 12.2, 14.2);
+        verify(mockHomeView).setTransactions(eq(Collections.singletonList(expectedTransaction)));
     }
 
 }

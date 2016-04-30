@@ -1,6 +1,7 @@
 package tech.jonas.mondoandroid.features.home;
 
 import android.content.Context;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -42,8 +43,15 @@ public class TransactionAdapter extends RecyclerView.Adapter implements StickyHe
         TransactionViewHolder transactionViewHolder = (TransactionViewHolder) holder;
         if (transaction.isDeclined()) {
             transactionViewHolder.tvTitle.setText(appContext.getString(R.string.transaction_declined, transaction.merchantName));
-        } else {
+        } else if(transaction.hasMerchant()) {
             transactionViewHolder.tvTitle.setText(transaction.merchantName);
+        } else {
+            transactionViewHolder.tvTitle.setText(transaction.description);
+        }
+        if(transaction.isPositiveAmount) {
+            transactionViewHolder.amountView.setTextColor(ContextCompat.getColor(appContext, R.color.green));
+        } else {
+            transactionViewHolder.amountView.setTextColor(ContextCompat.getColor(appContext, R.color.colorPrimaryDark));
         }
         transactionViewHolder.amountView.setAmount(transaction.pounds, transaction.cents);
         Glide.with(appContext)
