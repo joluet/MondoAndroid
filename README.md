@@ -19,5 +19,9 @@ public class OauthConfig {
 ```
 Put that config file in the package `tech.jonas.mondoandroid.api` and you're good to go.
 
+## Push Notifications
+Please note that this app currently uses a small Sinatra server hosted with _Heroku_ to be able to receive push notifications when a new transaction is made. The source code of that Sinatra server app can be found [here](https://github.com/joluet/MondoGcmPush).
+It just forwards the body of any transaction in form of a GCM push notification to the corresponding client.
+
 ## Build Instructions
 Just use the gradle wrapper to build the app: `$ ./gradlew assembleDebug`
