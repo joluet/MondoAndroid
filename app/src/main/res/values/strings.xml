@@ -9,4 +9,5 @@
     <string name="amount_and_merchant">%1$s, %2$s</string>
     <string name="description_merchant_logo">Merchant logo</string>
     <string name="average_spend">On average you spend %1$s.</string>
+    <string name="welcome">Welcome to Mondo</string>
 </resources>

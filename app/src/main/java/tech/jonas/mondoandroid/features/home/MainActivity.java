@@ -21,6 +21,7 @@ import tech.jonas.mondoandroid.R;
 import tech.jonas.mondoandroid.api.ApiComponent;
 import tech.jonas.mondoandroid.api.authentication.OauthManager;
 import tech.jonas.mondoandroid.di.ComponentProvider;
+import tech.jonas.mondoandroid.features.login.LoginActivity;
 import tech.jonas.mondoandroid.features.transaction.TransactionActivity;
 import tech.jonas.mondoandroid.ui.model.UiTransaction;
 
@@ -36,6 +37,7 @@ public class MainActivity extends RxAppCompatActivity implements HomeView {
     @SuppressWarnings("unchecked")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        setTheme(R.style.AppTheme_NoActionBar);
         super.onCreate(savedInstanceState);
 
         ApiComponent apiComponent = ((ComponentProvider<ApiComponent>) getApplicationContext()).getComponent();
@@ -105,10 +107,7 @@ public class MainActivity extends RxAppCompatActivity implements HomeView {
 
     @Override
     public void startLoginActivity() {
-        final Intent loginIntent = oauthManager.createLoginIntent();
-        loginIntent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
-        startActivity(loginIntent);
-
+        LoginActivity.start(this);
     }
 
     @Override

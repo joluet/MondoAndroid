@@ -40,7 +40,6 @@ public class OauthManager {
     private final GcmService gcmService;
 
     private final AtomicBoolean refreshingToken = new AtomicBoolean(false);
-    private String randomId;
 
     @Inject
     public OauthManager(IntentFactory intentFactory, MondoService mondoService, GcmService gcmService,
@@ -56,17 +55,13 @@ public class OauthManager {
         this.application = application;
     }
 
-    public Intent createLoginIntent() {
-        randomId = UUID.randomUUID().toString();
-        HttpUrl authorizeUrl = HttpUrl.parse("https://auth.getmondo.co.uk")
-                .newBuilder()
-                .addQueryParameter("client_id", OauthConfig.CLIENT_ID)
-                .addQueryParameter("redirect_uri", "https://mondo.co.uk")
-                .addQueryParameter("response_type", "code")
-                .addQueryParameter("state", randomId)
-                .build();
+    public static String getAuthUrl() {
+        final StringBuilder urlBuilder = new StringBuilder(Config.LOGIN_URL);
+        urlBuilder.append("?client_id=").append(OauthConfig.CLIENT_ID);
+        urlBuilder.append("&redirect_uri=").append(Config.REDIRECT_URL);
+        urlBuilder.append("&response_type=code");
 
-        return intentFactory.createUrlIntent(authorizeUrl.toString());
+        return urlBuilder.toString();
     }
 
     public Observable<String> getAuthToken(Uri data) {
@@ -74,7 +69,7 @@ public class OauthManager {
         params.put("grant_type", "authorization_code");
         params.put("client_id", OauthConfig.CLIENT_ID);
         params.put("client_secret", OauthConfig.CLIENT_SECRET);
-        params.put("redirect_uri", "https://mondo.co.uk");
+        params.put("redirect_uri", Config.REDIRECT_URL);
         params.put("code", data.getQueryParameter("code"));
         return mondoService.getAccessToken(params)
                 .doOnNext(tokenResponse -> accessToken.set(tokenResponse.accessToken))
@@ -118,10 +113,6 @@ public class OauthManager {
                 .flatMap(ignore -> mondoService.registerWebhook(registrationToken.accountId, Config.WEBHOOK_URL)))
                 .map(webhookResponse -> webhookResponse.webhook)
                 .doOnNext(webhook -> this.webhook.set(webhook.id));
-    }
-
-    public boolean isStateValid(String state) {
-        return randomId.equals(state);
     }
 
     public boolean isAuthenticated() {
