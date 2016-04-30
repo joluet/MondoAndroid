@@ -106,7 +106,7 @@ public class HomePresenterTest {
         when(mockMondoService.getTransactions(anyString(), anyString())).thenReturn(Observable.just(transactionList));
 
         homePresenter.onBindView(null);
-        final UiTransaction expectedTransaction = new UiTransaction("0", "12.34 ", "description", "category", "created", null, "merchant name", "logo url", new Spending(1234L, 1234L, 1), 12.2, 14.2);
+        final UiTransaction expectedTransaction = new UiTransaction("0", 12, 34, "12.34 ", "description", "category", "created", null, "merchant name", "logo url", new Spending(1234L, 1234L, 1), 12.2, 14.2);
         verify(mockHomeView).setTransactions(Collections.singletonList(expectedTransaction));
     }
 

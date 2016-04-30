@@ -16,6 +16,7 @@ import java.util.List;
 
 import ca.barrenechea.widget.recyclerview.decoration.StickyHeaderAdapter;
 import tech.jonas.mondoandroid.R;
+import tech.jonas.mondoandroid.ui.custom.AmountView;
 import tech.jonas.mondoandroid.ui.model.UiTransaction;
 import tech.jonas.mondoandroid.utils.DateUtils;
 
@@ -44,7 +45,7 @@ public class TransactionAdapter extends RecyclerView.Adapter implements StickyHe
         } else {
             transactionViewHolder.tvTitle.setText(transaction.merchantName);
         }
-        transactionViewHolder.tvAmount.setText(transaction.formattedAmount);
+        transactionViewHolder.amountView.setAmount(transaction.pounds, transaction.cents);
         Glide.with(appContext)
                 .load(transaction.merchantLogo)
                 .centerCrop()
@@ -59,7 +60,7 @@ public class TransactionAdapter extends RecyclerView.Adapter implements StickyHe
         transactionViewHolder.itemView.setOnClickListener(v -> {
             if (onTransactionClickListener != null) {
                 onTransactionClickListener.onClick(transaction, transactionViewHolder.ivLogo,
-                        transactionViewHolder.tvTitle, transactionViewHolder.tvAmount);
+                        transactionViewHolder.tvTitle, transactionViewHolder.amountView);
             }
         });
     }
@@ -111,14 +112,14 @@ public class TransactionAdapter extends RecyclerView.Adapter implements StickyHe
 
     private class TransactionViewHolder extends RecyclerView.ViewHolder {
         public final TextView tvTitle;
-        public final TextView tvAmount;
+        public final AmountView amountView;
         public final ImageView ivLogo;
 
         public TransactionViewHolder(View itemView) {
             super(itemView);
             ivLogo = (ImageView) itemView.findViewById(R.id.iv_logo);
             tvTitle = (TextView) itemView.findViewById(R.id.tv_title);
-            tvAmount = (TextView) itemView.findViewById(R.id.tv_amount);
+            amountView = (AmountView) itemView.findViewById(R.id.amount);
         }
     }
 

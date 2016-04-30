@@ -7,6 +7,8 @@ import java.io.Serializable;
 public class UiTransaction implements Serializable {
 
     public final String id;
+    public final long pounds;
+    public final long cents;
     public final String formattedAmount;
     public final String description;
     public final String category;
@@ -18,8 +20,10 @@ public class UiTransaction implements Serializable {
     public final double latitude;
     public final double longitude;
 
-    public UiTransaction(String id, String formattedAmount, String description, String category, String created, DeclineReason declineReason, String merchantName, String merchantLogo, Spending spending, double latitude, double longitude) {
+    public UiTransaction(String id, long pounds, long cents, String formattedAmount, String description, String category, String created, DeclineReason declineReason, String merchantName, String merchantLogo, Spending spending, double latitude, double longitude) {
         this.id = id;
+        this.pounds = pounds;
+        this.cents = cents;
         this.formattedAmount = formattedAmount;
         this.description = description;
         this.category = category;
@@ -34,6 +38,8 @@ public class UiTransaction implements Serializable {
 
     private UiTransaction(Builder builder) {
         id = builder.id;
+        pounds = builder.pounds;
+        cents = builder.cents;
         formattedAmount = builder.formattedAmount;
         description = builder.description;
         category = builder.category;
@@ -84,52 +90,6 @@ public class UiTransaction implements Serializable {
         }
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        UiTransaction that = (UiTransaction) o;
-
-        if (Double.compare(that.latitude, latitude) != 0) return false;
-        if (Double.compare(that.longitude, longitude) != 0) return false;
-        if (id != null ? !id.equals(that.id) : that.id != null) return false;
-        if (formattedAmount != null ? !formattedAmount.equals(that.formattedAmount) : that.formattedAmount != null)
-            return false;
-        if (description != null ? !description.equals(that.description) : that.description != null)
-            return false;
-        if (category != null ? !category.equals(that.category) : that.category != null)
-            return false;
-        if (created != null ? !created.equals(that.created) : that.created != null) return false;
-        if (declineReason != that.declineReason) return false;
-        if (merchantName != null ? !merchantName.equals(that.merchantName) : that.merchantName != null)
-            return false;
-        if (merchantLogo != null ? !merchantLogo.equals(that.merchantLogo) : that.merchantLogo != null)
-            return false;
-        if (spending != null ? !spending.equals(that.spending) : that.spending != null)
-            return false;
-
-        return true;
-    }
-
-    @Override
-    public String toString() {
-        return "UiTransaction{" +
-                "id='" + id + '\'' +
-                ", formattedAmount='" + formattedAmount + '\'' +
-                ", description='" + description + '\'' +
-                ", category='" + category + '\'' +
-                ", created='" + created + '\'' +
-                ", declineReason=" + declineReason +
-                ", merchantName='" + merchantName + '\'' +
-                ", merchantLogo='" + merchantLogo + '\'' +
-                ", spending=" + spending +
-                ", latitude=" + latitude +
-                ", longitude=" + longitude +
-                '}';
-    }
-
-
     interface IBuild {
         UiTransaction build();
     }
@@ -144,6 +104,7 @@ public class UiTransaction implements Serializable {
 
     interface ISpending {
         ILatitude withSpending(Spending val);
+
         UiTransaction build();
     }
 
@@ -153,6 +114,7 @@ public class UiTransaction implements Serializable {
 
     interface IMerchantName {
         IMerchantLogo withMerchantName(String val);
+
         UiTransaction build();
     }
 
@@ -176,11 +138,19 @@ public class UiTransaction implements Serializable {
         IDescription withFormattedAmount(String val);
     }
 
-    interface IId {
-        IFormattedAmount withId(String val);
+    interface ICents {
+        IFormattedAmount withCents(long val);
     }
 
-    public static final class Builder implements ILongitude, ILatitude, ISpending, IMerchantLogo, IMerchantName, IDeclineReason, ICreated, ICategory, IDescription, IFormattedAmount, IId, IBuild {
+    interface IPounds {
+        ICents withPounds(long val);
+    }
+
+    interface IId {
+        IPounds withId(String val);
+    }
+
+    public static final class Builder implements ILongitude, ILatitude, ISpending, IMerchantLogo, IMerchantName, IDeclineReason, ICreated, ICategory, IDescription, IFormattedAmount, ICents, IPounds, IId, IBuild {
         private double longitude;
         private double latitude;
         private Spending spending;
@@ -191,6 +161,8 @@ public class UiTransaction implements Serializable {
         private String category;
         private String description;
         private String formattedAmount;
+        private long cents;
+        private long pounds;
         private String id;
 
         private Builder() {
@@ -257,7 +229,19 @@ public class UiTransaction implements Serializable {
         }
 
         @Override
-        public IFormattedAmount withId(String val) {
+        public IFormattedAmount withCents(long val) {
+            cents = val;
+            return this;
+        }
+
+        @Override
+        public ICents withPounds(long val) {
+            pounds = val;
+            return this;
+        }
+
+        @Override
+        public IPounds withId(String val) {
             id = val;
             return this;
         }
@@ -265,5 +249,52 @@ public class UiTransaction implements Serializable {
         public UiTransaction build() {
             return new UiTransaction(this);
         }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        UiTransaction that = (UiTransaction) o;
+
+        if (pounds != that.pounds) return false;
+        if (cents != that.cents) return false;
+        if (Double.compare(that.latitude, latitude) != 0) return false;
+        if (Double.compare(that.longitude, longitude) != 0) return false;
+        if (id != null ? !id.equals(that.id) : that.id != null) return false;
+        if (formattedAmount != null ? !formattedAmount.equals(that.formattedAmount) : that.formattedAmount != null)
+            return false;
+        if (description != null ? !description.equals(that.description) : that.description != null)
+            return false;
+        if (category != null ? !category.equals(that.category) : that.category != null)
+            return false;
+        if (created != null ? !created.equals(that.created) : that.created != null) return false;
+        if (declineReason != that.declineReason) return false;
+        if (merchantName != null ? !merchantName.equals(that.merchantName) : that.merchantName != null)
+            return false;
+        if (merchantLogo != null ? !merchantLogo.equals(that.merchantLogo) : that.merchantLogo != null)
+            return false;
+        return spending != null ? spending.equals(that.spending) : that.spending == null;
+
+    }
+
+    @Override
+    public String toString() {
+        return "UiTransaction{" +
+                "id='" + id + '\'' +
+                ", pounds=" + pounds +
+                ", cents=" + cents +
+                ", formattedAmount='" + formattedAmount + '\'' +
+                ", description='" + description + '\'' +
+                ", category='" + category + '\'' +
+                ", created='" + created + '\'' +
+                ", declineReason=" + declineReason +
+                ", merchantName='" + merchantName + '\'' +
+                ", merchantLogo='" + merchantLogo + '\'' +
+                ", spending=" + spending +
+                ", latitude=" + latitude +
+                ", longitude=" + longitude +
+                '}';
     }
 }

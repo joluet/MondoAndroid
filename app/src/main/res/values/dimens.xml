@@ -8,4 +8,6 @@
     <dimen name="transaction_amount_text_size">30sp</dimen>
     <dimen name="transaction_history_text_size">18sp</dimen>
     <dimen name="transaction_merchant_logo_size">90dp</dimen>
+    <dimen name="text_size_amount">30sp</dimen>
+    <dimen name="text_size_amount_cents">16sp</dimen>
 </resources>

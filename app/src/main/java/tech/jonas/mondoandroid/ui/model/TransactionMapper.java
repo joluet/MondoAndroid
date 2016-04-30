@@ -27,6 +27,8 @@ public class TransactionMapper {
 
     public static UiTransaction map(HomeStringProvider stringProvider, Transaction apiTransaction, Map<Merchant, Spending> spendingPerMerchant) {
         final double amount = Math.abs(apiTransaction.amount) / CENTS_PER_POUND;
+        final long integerPart = (long) Math.abs(apiTransaction.amount/CENTS_PER_POUND);
+        final long fractionalPart = (long) Math.abs(apiTransaction.amount%CENTS_PER_POUND);
         final DeclineReason declineReason;
         if (apiTransaction.declineReason == null) {
             declineReason = null;
@@ -36,6 +38,8 @@ public class TransactionMapper {
         if (apiTransaction.merchant != null && spendingPerMerchant != null) {
             return UiTransaction.builder()
                     .withId(apiTransaction.id)
+                    .withPounds(integerPart)
+                    .withCents(fractionalPart)
                     .withFormattedAmount(stringProvider.getFormattedGbp(amount, apiTransaction.merchant.emoji))
                     .withDescription(apiTransaction.description)
                     .withCategory(apiTransaction.category)
@@ -50,6 +54,8 @@ public class TransactionMapper {
         } else if (apiTransaction.merchant != null) {
             return UiTransaction.builder()
                     .withId(apiTransaction.id)
+                    .withPounds(integerPart)
+                    .withCents(fractionalPart)
                     .withFormattedAmount(stringProvider.getFormattedGbp(amount, apiTransaction.merchant.emoji))
                     .withDescription(apiTransaction.description)
                     .withCategory(apiTransaction.category)
@@ -61,6 +67,8 @@ public class TransactionMapper {
         } else {
             return UiTransaction.builder()
                     .withId(apiTransaction.id)
+                    .withPounds(integerPart)
+                    .withCents(fractionalPart)
                     .withFormattedAmount(stringProvider.getFormattedGbp(amount, ""))
                     .withDescription(apiTransaction.description)
                     .withCategory(apiTransaction.category)

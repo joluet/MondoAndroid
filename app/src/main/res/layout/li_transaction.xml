@@ -24,21 +24,18 @@
         android:layout_centerVertical="true"
         android:layout_marginEnd="6dp"
         android:layout_toEndOf="@id/iv_logo"
-        android:layout_toStartOf="@+id/tv_amount"
+        android:layout_toStartOf="@+id/amount"
         android:maxLines="1"
         android:textColor="@color/colorPrimaryDark"
         android:textSize="18sp"
         android:transitionName="merchant" />
 
-    <TextView
-        android:id="@id/tv_amount"
+    <tech.jonas.mondoandroid.ui.custom.AmountView
+        android:id="@id/amount"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
         android:layout_centerVertical="true"
-        android:textColor="@color/colorPrimaryDark"
-        android:textSize="@dimen/transaction_list_text_size"
         android:transitionName="amount" />
-
 
 </RelativeLayout>

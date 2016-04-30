@@ -10,4 +10,5 @@
     <string name="description_merchant_logo">Merchant logo</string>
     <string name="average_spend">On average you spend %1$s.</string>
     <string name="welcome">Welcome to Mondo</string>
+    <string name="amount_cents">.%02d</string>
 </resources>
