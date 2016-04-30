@@ -31,8 +31,8 @@ public class DateUtils {
 
     public static String getDateString(final String date, Context context) throws ParseException {
         CALENDAR.setTime(parse(date));
-        return android.text.format.DateUtils.formatDateTime(context, CALENDAR.getTimeInMillis(),
-                android.text.format.DateUtils.FORMAT_ABBREV_MONTH);
+        return android.text.format.DateUtils.getRelativeDateTimeString(context, CALENDAR.getTimeInMillis(),
+                android.text.format.DateUtils.HOUR_IN_MILLIS, android.text.format.DateUtils.DAY_IN_MILLIS, 0).toString();
     }
 
 }
