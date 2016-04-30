@@ -83,6 +83,12 @@ public class HomePresenterImpl implements HomePresenter {
         getTransactionsAndUpdateUI();
     }
 
+    @Override
+    public void onLogoutClicked() {
+        oauthManager.logout();
+        view.startLoginActivity();
+    }
+
     private void refreshTokenAndUpdateUI() {
         final Observable<String> tokenObservable = oauthManager.refreshAuthToken().cache();
 

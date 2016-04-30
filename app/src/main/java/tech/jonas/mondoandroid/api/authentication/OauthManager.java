@@ -118,4 +118,9 @@ public class OauthManager {
     public boolean isAuthenticated() {
         return accessToken.isSet();
     }
+
+    public void logout() {
+        accessToken.delete();
+        refreshToken.delete();
+    }
 }

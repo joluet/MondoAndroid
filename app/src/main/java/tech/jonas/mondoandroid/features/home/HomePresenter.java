@@ -9,4 +9,6 @@ public interface HomePresenter {
     void onUnBindView();
 
     void onRefresh();
+
+    void onLogoutClicked();
 }
