@@ -14,6 +14,8 @@ import rx.schedulers.Schedulers;
 import tech.jonas.mondoandroid.BuildConfig;
 import tech.jonas.mondoandroid.api.MondoService;
 import tech.jonas.mondoandroid.api.authentication.OauthManager;
+import tech.jonas.mondoandroid.api.model.Account;
+import tech.jonas.mondoandroid.api.model.Accounts;
 import tech.jonas.mondoandroid.api.model.Address;
 import tech.jonas.mondoandroid.api.model.Balance;
 import tech.jonas.mondoandroid.api.model.Merchant;
@@ -59,6 +61,10 @@ public class HomePresenterTest {
         stringProvider = new HomeStringProvider(RuntimeEnvironment.application);
 
         schedulerProvider = new SchedulerProvider(Schedulers.immediate(), Schedulers.immediate());
+
+        final Account account = new Account("account_id");
+        final Accounts accounts = new Accounts(Collections.singletonList(account));
+        when(mockMondoService.getAccounts()).thenReturn(Observable.just(accounts));
 
         homePresenter = HomePresenterImpl.builder()
                 .withSubscriptionManager(mockSubscriptionManager)

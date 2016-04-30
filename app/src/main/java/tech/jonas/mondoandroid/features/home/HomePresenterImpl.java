@@ -13,6 +13,7 @@ import rx.Subscription;
 import tech.jonas.mondoandroid.api.Config;
 import tech.jonas.mondoandroid.api.MondoService;
 import tech.jonas.mondoandroid.api.authentication.OauthManager;
+import tech.jonas.mondoandroid.api.model.Account;
 import tech.jonas.mondoandroid.api.model.Merchant;
 import tech.jonas.mondoandroid.api.model.Transaction;
 import tech.jonas.mondoandroid.api.model.TransactionList;
@@ -106,7 +107,11 @@ public class HomePresenterImpl implements HomePresenter {
     }
 
     private void getTransactionsAndUpdateUI() {
-        Subscription balanceSub = mondoService.getBalance(Config.ACCOUNT_ID)
+        Observable<Account> accountObservable = mondoService.getAccounts()
+                .map(accounts -> ListUtils.first(accounts.accounts)).cache();
+
+        Subscription balanceSub = accountObservable
+                .flatMap(account -> mondoService.getBalance(account.id))
                 .compose(schedulerProvider.getSchedulers())
                 .compose(BalanceMapper.map(stringProvider))
                 .subscribe(balance -> {
@@ -120,7 +125,8 @@ public class HomePresenterImpl implements HomePresenter {
                 });
         subscriptionManager.add(balanceSub);
 
-        Observable<TransactionList> transactionObservable = mondoService.getTransactions(Config.ACCOUNT_ID, "merchant").cache();
+        Observable<TransactionList> transactionObservable = accountObservable
+                .flatMap(account -> mondoService.getTransactions(account.id, "merchant")).cache();
 
         Subscription transactionSub = calculateSpendingPerMerchant(transactionObservable)
                 .flatMap(spendingPerMerchant -> transactionObservable
