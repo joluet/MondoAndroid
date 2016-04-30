@@ -22,6 +22,7 @@ import tech.jonas.mondoandroid.R;
 import tech.jonas.mondoandroid.api.Config;
 import tech.jonas.mondoandroid.api.GcmService;
 import tech.jonas.mondoandroid.api.MondoService;
+import tech.jonas.mondoandroid.api.OauthConfig;
 import tech.jonas.mondoandroid.api.model.RegistrationToken;
 import tech.jonas.mondoandroid.api.model.Webhook;
 import tech.jonas.mondoandroid.data.IntentFactory;
@@ -59,7 +60,7 @@ public class OauthManager {
         randomId = UUID.randomUUID().toString();
         HttpUrl authorizeUrl = HttpUrl.parse("https://auth.getmondo.co.uk")
                 .newBuilder()
-                .addQueryParameter("client_id", Config.CLIENT_ID)
+                .addQueryParameter("client_id", OauthConfig.CLIENT_ID)
                 .addQueryParameter("redirect_uri", "https://mondo.co.uk")
                 .addQueryParameter("response_type", "code")
                 .addQueryParameter("state", randomId)
@@ -71,8 +72,8 @@ public class OauthManager {
     public Observable<String> getAuthToken(Uri data) {
         final Map<String, String> params = new HashMap<>();
         params.put("grant_type", "authorization_code");
-        params.put("client_id", Config.CLIENT_ID);
-        params.put("client_secret", Config.CLIENT_SECRET);
+        params.put("client_id", OauthConfig.CLIENT_ID);
+        params.put("client_secret", OauthConfig.CLIENT_SECRET);
         params.put("redirect_uri", "https://mondo.co.uk");
         params.put("code", data.getQueryParameter("code"));
         return mondoService.getAccessToken(params)
@@ -88,8 +89,8 @@ public class OauthManager {
         accessToken.delete();
         final Map<String, String> params = new HashMap<>();
         params.put("grant_type", "refresh_token");
-        params.put("client_id", Config.CLIENT_ID);
-        params.put("client_secret", Config.CLIENT_SECRET);
+        params.put("client_id", OauthConfig.CLIENT_ID);
+        params.put("client_secret", OauthConfig.CLIENT_SECRET);
         params.put("refresh_token", refreshToken.get());
         return mondoService.getAccessToken(params)
                 .doOnNext(tokenResponse -> accessToken.set(tokenResponse.accessToken))

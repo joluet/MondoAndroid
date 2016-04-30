@@ -1,7 +1,6 @@
 *.iml
 .gradle
-*Config.java
-*google-services.json
+*OauthConfig.java
 /local.properties
 !codeStyleSettings.xml
 .DS_Store

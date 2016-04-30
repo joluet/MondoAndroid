@@ -1,0 +1,43 @@
+{
+  "project_info": {
+    "project_id": "mondoandroid-3a3b0",
+    "project_number": "590602918025",
+    "name": "MondoAndroid"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:590602918025:android:c62d819bb1349b70",
+        "client_id": "android:tech.jonas.mondoandroid",
+        "client_type": 1,
+        "android_client_info": {
+          "package_name": "tech.jonas.mondoandroid",
+          "certificate_hash": []
+        }
+      },
+      "oauth_client": [],
+      "api_key": [],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "cloud_messaging_service": {
+          "status": 2,
+          "apns_config": []
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "google_signin_service": {
+          "status": 1
+        },
+        "ads_service": {
+          "status": 1
+        }
+      }
+    }
+  ],
+  "client_info": [],
+  "ARTIFACT_VERSION": "1"
+}
