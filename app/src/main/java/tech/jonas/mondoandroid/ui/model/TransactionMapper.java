@@ -47,6 +47,17 @@ public class TransactionMapper {
                     .withLatitude(apiTransaction.merchant.address.latitude)
                     .withLongitude(apiTransaction.merchant.address.longitude)
                     .build();
+        } else if (apiTransaction.merchant != null) {
+            return UiTransaction.builder()
+                    .withId(apiTransaction.id)
+                    .withFormattedAmount(stringProvider.getFormattedGbp(amount, apiTransaction.merchant.emoji))
+                    .withDescription(apiTransaction.description)
+                    .withCategory(apiTransaction.category)
+                    .withCreated(apiTransaction.created)
+                    .withDeclineReason(declineReason)
+                    .withMerchantName(apiTransaction.merchant.name)
+                    .withMerchantLogo(apiTransaction.merchant.logo)
+                    .build();
         } else {
             return UiTransaction.builder()
                     .withId(apiTransaction.id)

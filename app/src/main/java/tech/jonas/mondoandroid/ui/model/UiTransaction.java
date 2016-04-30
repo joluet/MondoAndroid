@@ -144,6 +144,7 @@ public class UiTransaction implements Serializable {
 
     interface ISpending {
         ILatitude withSpending(Spending val);
+        UiTransaction build();
     }
 
     interface IMerchantLogo {
