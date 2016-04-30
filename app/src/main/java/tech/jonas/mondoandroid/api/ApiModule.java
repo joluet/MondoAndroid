@@ -24,6 +24,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 import tech.jonas.mondoandroid.api.authentication.AccessToken;
 import tech.jonas.mondoandroid.api.authentication.OauthInterceptor;
 import tech.jonas.mondoandroid.api.authentication.RefreshToken;
+import tech.jonas.mondoandroid.api.authentication.WebhookId;
 import tech.jonas.mondoandroid.di.scopes.ApiScope;
 import tech.jonas.mondoandroid.features.home.HomeStringProvider;
 
@@ -33,6 +34,8 @@ import static com.jakewharton.byteunits.DecimalByteUnit.MEGABYTES;
 public final class ApiModule {
     public static final String PREF_KEY_ACCESS_TOKEN = "access-token";
     public static final String PREF_KEY_REFRESH_TOKEN = "refresh-token";
+    public static final String PREF_KEY_WEBHOOK = "webhook";
+
     private static final int DISK_CACHE_SIZE = (int) MEGABYTES.toBytes(50);
     private static final HttpUrl PRODUCTION_API_URL = HttpUrl.parse(Config.BASE_URL);
     private static final HttpUrl GCM_API_URL = HttpUrl.parse(Config.GCM_URL);
@@ -148,6 +151,13 @@ public final class ApiModule {
     @RefreshToken
     Preference<String> provideRefreshToken(RxSharedPreferences prefs) {
         return prefs.getString(PREF_KEY_REFRESH_TOKEN);
+    }
+
+    @Provides
+    @ApiScope
+    @WebhookId
+    Preference<String> provideWebhook(RxSharedPreferences prefs) {
+        return prefs.getString(PREF_KEY_WEBHOOK);
     }
 
     @Provides

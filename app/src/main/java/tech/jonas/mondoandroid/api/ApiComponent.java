@@ -9,6 +9,7 @@ import dagger.Component;
 import tech.jonas.mondoandroid.api.authentication.AccessToken;
 import tech.jonas.mondoandroid.api.authentication.OauthManager;
 import tech.jonas.mondoandroid.api.authentication.RefreshToken;
+import tech.jonas.mondoandroid.api.authentication.WebhookId;
 import tech.jonas.mondoandroid.di.MondoComponent;
 import tech.jonas.mondoandroid.di.scopes.ApiScope;
 import tech.jonas.mondoandroid.features.home.HomeStringProvider;
@@ -38,6 +39,9 @@ public interface ApiComponent {
 
     @RefreshToken
     Preference<String> refreshToken();
+
+    @WebhookId
+    Preference<String> refreshWebhook();
 
     SchedulerProvider schedulerProvider();
 

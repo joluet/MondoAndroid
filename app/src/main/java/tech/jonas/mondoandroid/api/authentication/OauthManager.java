@@ -33,6 +33,7 @@ public class OauthManager {
     private final IntentFactory intentFactory;
     private final Preference<String> accessToken;
     private final Preference<String> refreshToken;
+    private final Preference<String> webhook;
     private final Application application;
     private final MondoService mondoService;
     private final GcmService gcmService;
@@ -42,6 +43,7 @@ public class OauthManager {
 
     @Inject
     public OauthManager(IntentFactory intentFactory, MondoService mondoService, GcmService gcmService,
+                        @WebhookId Preference<String> webhook,
                         @AccessToken Preference<String> accessToken, @RefreshToken Preference<String> refreshToken,
                         Application application) {
         this.intentFactory = intentFactory;
@@ -49,6 +51,7 @@ public class OauthManager {
         this.gcmService = gcmService;
         this.accessToken = accessToken;
         this.refreshToken = refreshToken;
+        this.webhook = webhook;
         this.application = application;
     }
 
@@ -110,8 +113,10 @@ public class OauthManager {
                         subscriber.onError(e);
                     }
                 })).flatMap(registrationToken -> gcmService.uploadToken(registrationToken)
-                .flatMap(registrationAnswer -> mondoService.registerWebhook(registrationToken.accountId, Config.WEBHOOK_URL)))
-                .map(webhookResponse -> webhookResponse.webhook);
+                .flatMap(registrationAnswer -> mondoService.deleteWebhook(webhook.get()).onErrorResumeNext(Observable.just(null)))
+                .flatMap(ignore -> mondoService.registerWebhook(registrationToken.accountId, Config.WEBHOOK_URL)))
+                .map(webhookResponse -> webhookResponse.webhook)
+                .doOnNext(webhook -> this.webhook.set(webhook.id));
     }
 
     public boolean isStateValid(String state) {

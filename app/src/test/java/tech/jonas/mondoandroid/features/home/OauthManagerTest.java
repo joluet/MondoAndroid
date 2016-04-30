@@ -52,6 +52,7 @@ public class OauthManagerTest {
     private HomeStringProvider stringProvider;
     private Preference<String> accessTokenPreference;
     private Preference<String> refreshTokenPreference;
+    private Preference<String> webhookPreference;
     private SchedulerProvider schedulerProvider;
 
     // SUT
@@ -69,12 +70,13 @@ public class OauthManagerTest {
         final SharedPreferences prefs = RuntimeEnvironment.application.getSharedPreferences("mondo", MODE_PRIVATE);
         final RxSharedPreferences rxSharedPreferences = RxSharedPreferences.create(prefs);
         accessTokenPreference = rxSharedPreferences.getString(ApiModule.PREF_KEY_ACCESS_TOKEN);
-        refreshTokenPreference = rxSharedPreferences.getString(ApiModule.PREF_KEY_ACCESS_TOKEN);
+        refreshTokenPreference = rxSharedPreferences.getString(ApiModule.PREF_KEY_REFRESH_TOKEN);
+        webhookPreference = rxSharedPreferences.getString(ApiModule.PREF_KEY_WEBHOOK);
 
         schedulerProvider = new SchedulerProvider(Schedulers.immediate(), Schedulers.immediate());
 
         oauthManager = new OauthManager(mockIntentFactory, mockMondoService, mockGcmService, accessTokenPreference,
-                refreshTokenPreference, RuntimeEnvironment.application);
+                refreshTokenPreference, webhookPreference, RuntimeEnvironment.application);
     }
 
     @SuppressWarnings("unchecked")

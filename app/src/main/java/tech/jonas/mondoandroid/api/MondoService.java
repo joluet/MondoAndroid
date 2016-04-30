@@ -2,6 +2,7 @@ package tech.jonas.mondoandroid.api;
 
 import java.util.Map;
 
+import retrofit2.http.DELETE;
 import retrofit2.http.Field;
 import retrofit2.http.FieldMap;
 import retrofit2.http.FormUrlEncoded;
@@ -35,6 +36,9 @@ public interface MondoService {
     @FormUrlEncoded
     @POST("/webhooks")
     Observable<WebhookResponse> registerWebhook(@Field("account_id") String accountId, @Field("url") String url);
+
+    @DELETE("/webhooks/{id}")
+    Observable<WebhookResponse> deleteWebhook(@Path("id") String webhookId);
 
     @GET("/transaction/{id}")
     Observable<Transaction> getTransaction(@Path("id") String transactionId);
