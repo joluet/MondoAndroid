@@ -39,7 +39,7 @@ public class TransactionPresenterImpl implements TransactionPresenter {
             view.moveMapTo(transaction.latitude, transaction.longitude);
             view.addMapMarker(transaction.latitude, transaction.longitude, transaction.merchantName);
         }
-        view.setAmount(transaction.formattedAmount);
+        view.setAmount(transaction.pounds, transaction.cents);
     }
 
     @Override

@@ -38,8 +38,8 @@
         android:transitionName="merchant"
         tools:text="Merchant Name" />
 
-    <TextView
-        android:id="@+id/tv_amount"
+    <tech.jonas.mondoandroid.ui.custom.AmountView
+        android:id="@+id/amount"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/tv_merchant"
@@ -47,15 +47,13 @@
         android:layout_marginStart="@dimen/activity_horizontal_margin"
         android:layout_marginTop="10dp"
         android:textColor="@color/colorPrimaryDark"
-        android:textSize="@dimen/transaction_amount_text_size"
-        android:transitionName="amount"
-        tools:text="23.03£" />
+        android:transitionName="amount" />
 
     <TextView
         android:id="@+id/tv_average"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/tv_amount"
+        android:layout_below="@id/amount"
         android:layout_centerHorizontal="true"
         android:layout_marginStart="@dimen/activity_horizontal_margin"
         android:layout_marginTop="10dp"

@@ -23,6 +23,7 @@ import javax.inject.Inject;
 import tech.jonas.mondoandroid.R;
 import tech.jonas.mondoandroid.api.ApiComponent;
 import tech.jonas.mondoandroid.di.ComponentProvider;
+import tech.jonas.mondoandroid.ui.custom.AmountView;
 import tech.jonas.mondoandroid.ui.model.UiTransaction;
 import tech.jonas.mondoandroid.utils.UiUtils;
 
@@ -31,7 +32,7 @@ public class TransactionActivity extends AppCompatActivity implements Transactio
     public static final String ARG_TRANSACTION = "arg_transaction";
     @Inject
     TransactionPresenter presenter;
-    private TextView amountView;
+    private AmountView amountView;
     private TextView averageSpendView;
     private TextView merchantView;
     private ImageView logoView;
@@ -53,7 +54,7 @@ public class TransactionActivity extends AppCompatActivity implements Transactio
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_transaction);
 
-        amountView = (TextView) findViewById(R.id.tv_amount);
+        amountView = (AmountView) findViewById(R.id.amount);
         averageSpendView = (TextView) findViewById(R.id.tv_average);
         merchantView = (TextView) findViewById(R.id.tv_merchant);
         logoView = (ImageView) findViewById(R.id.iv_logo);
@@ -131,8 +132,8 @@ public class TransactionActivity extends AppCompatActivity implements Transactio
     }
 
     @Override
-    public void setAmount(String formattedAmount) {
-        amountView.setText(formattedAmount);
+    public void setAmount(long integerPart, long fractionalPart) {
+        amountView.setAmount(integerPart, fractionalPart);
     }
 
     @Override

@@ -7,7 +7,7 @@ public interface TransactionView {
 
     void moveMapTo(double lat, double lng);
 
-    void setAmount(String formattedAmount);
+    void setAmount(long integerPart, long fractionalPart);
 
     void setAverageSpend(String averageSpend);
 
