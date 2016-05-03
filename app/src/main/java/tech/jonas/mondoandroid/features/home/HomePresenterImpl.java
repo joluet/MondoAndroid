@@ -174,7 +174,7 @@ public class HomePresenterImpl implements HomePresenter {
                     }
                     int count = transactions.size();
                     long average = total / count;
-                    return new Pair<>(merchant, new Spending(total, average, count));
+                    return Pair.<Merchant,Spending>create(merchant, new Spending(total, average, count));
                 }))
                 .toList()
                 .map(ListUtils::toMap);
